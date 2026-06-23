@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ring Size Converter mm to US/UK/EU | Instant</title>
+<meta name="description" content="Free ring size converter: enter inside diameter or circumference in mm, or a US, UK, EU or Japan size, and instantly see the matching size in every system. Includes a printable sizer.">
+<style>
+  :root{
+    --bg:#0e1411;--panel:#151d18;--panel2:#1b2620;--line:#27332b;
+    --txt:#e7efe9;--muted:#93a39a;--accent:#46d39a;--accent-d:#2fae7e;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:24px 18px 60px}
+  header.site{text-align:center;padding:14px 0 6px}
+  .logo{display:inline-flex;align-items:center;gap:8px;font-weight:700;letter-spacing:.2px}
+  .logo .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+  h1{font-size:clamp(1.5rem,4vw,2.1rem);line-height:1.2;margin:18px 0 6px;text-align:center}
+  .sub{color:var(--muted);text-align:center;margin:0 auto 22px;max-width:620px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  .field{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;transition:border-color .15s,box-shadow .15s}
+  .field:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(70,211,154,.15)}
+  .field label{display:block;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+  .field .hint{font-size:.72rem;color:var(--muted);margin-top:3px}
+  .field input,.field select{
+    width:100%;background:transparent;border:0;color:var(--txt);
+    font-size:1.15rem;font-weight:600;outline:none;font-family:inherit
+  }
+  .field select{cursor:pointer}
+  .field select option{background:var(--panel2);color:var(--txt)}
+  .field input::placeholder{color:#4d5b52;font-weight:500}
+  .field.active{border-color:var(--accent)}
+  .toprow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .pill{display:inline-flex;gap:6px;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.85rem;color:var(--muted)}
+  .btn{cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--txt);border-radius:10px;padding:9px 14px;font-size:.9rem;font-weight:600;font-family:inherit;transition:.15s}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#06241a;border-color:var(--accent)}
+  .btn.primary:hover{background:var(--accent-d);color:#06241a}
+  .note{font-size:.85rem;color:var(--muted);margin-top:12px;min-height:1.2em}
+  .note b{color:var(--accent)}
+  .tabs{display:flex;gap:6px;margin:34px 0 0;flex-wrap:wrap}
+  .tab{cursor:pointer;background:transparent;border:1px solid var(--line);color:var(--muted);padding:8px 14px;border-radius:999px;font-size:.85rem;font-family:inherit}
+  .tab.on{background:var(--accent);color:#06241a;border-color:var(--accent);font-weight:700}
+  .panelbox{margin-top:14px}
+  .hidden{display:none}
+  .measure-controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+  .cal{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .circles{position:relative;display:flex;justify-content:center;align-items:center;min-height:240px;background:repeating-linear-gradient(45deg,#121a15,#121a15 10px,#10160f 10px,#10160f 20px);border-radius:12px;border:1px solid var(--line)}
+  .ringc{position:absolute;border:2px solid var(--accent);border-radius:50%;display:flex;align-items:flex-end;justify-content:center}
+  .ringc span{transform:translateY(120%);font-size:.7rem;color:var(--accent);white-space:nowrap;background:var(--bg);padding:1px 5px;border-radius:6px}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .strip-row{display:flex;align-items:center;gap:12px;border-bottom:1px dashed var(--line);padding:8px 0}
+  .strip-bar{height:18px;background:var(--accent);border-radius:4px;flex:0 0 auto;opacity:.9}
+  .strip-lab{font-size:.85rem;min-width:120px}
+  .pro{margin-top:26px;background:linear-gradient(135deg,#16241d,#13201a);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+  .pro h3{margin:0 0 4px;font-size:1.05rem}
+  .pro p{margin:0;color:var(--muted);font-size:.9rem;max-width:520px}
+  .pro .btn{white-space:nowrap}
+  .ad{margin:26px 0;min-height:60px;border:1px dashed var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#3a463e;font-size:.8rem}
+  section.content{margin-top:38px;color:#cdd8d1}
+  section.content h2{font-size:1.25rem;margin:26px 0 8px}
+  section.content h3{font-size:1rem;margin:18px 0 4px}
+  section.content p{margin:6px 0;color:#bcc8c0}
+  footer{text-align:center;color:var(--muted);font-size:.85rem;margin-top:44px;padding-top:18px;border-top:1px solid var(--line)}
+  footer a{color:var(--accent);text-decoration:none}
+  table.ref{width:100%;border-collapse:collapse;margin-top:10px;font-size:.85rem}
+  table.ref th,table.ref td{border:1px solid var(--line);padding:6px 8px;text-align:center}
+  table.ref th{background:var(--panel2);color:var(--accent)}
+  .scrollx{overflow-x:auto}
+  @media print{
+    body{background:#fff;color:#000}
+    .noprint{display:none!important}
+    .card,.panelbox{box-shadow:none;border-color:#000}
+    .strip-bar{background:#000}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <span class="logo"><span class="dot"></span> RingFit</span>
+  </header>
+
+  <h1>Ring Size Converter &mdash; mm to US / UK / EU</h1>
+  <p class="sub">Enter any one value below &mdash; inside diameter, circumference, or a US, UK, EU or Japan size &mdash; and every other system updates instantly. No sign-up, runs entirely in your browser.</p>
+
+  <div class="card">
+    <div class="toprow">
+      <span class="pill">Cross-converts live across 6 systems</span>
+      <button class="btn noprint" id="clearBtn" type="button">Clear</button>
+    </div>
+
+    <div class="grid">
+      <div class="field" data-key="dia">
+        <label for="dia">Inside diameter (mm)</label>
+        <input id="dia" type="number" inputmode="decimal" step="0.01" placeholder="e.g. 16.9">
+        <div class="hint">Measure the inner edge across the middle</div>
+      </div>
+      <div class="field" data-key="circ">
+        <label for="circ">Inside circumference (mm)</label>
+        <input id="circ" type="number" inputmode="decimal" step="0.1" placeholder="e.g. 53.1">
+        <div class="hint">Wrap a strip around the finger</div>
+      </div>
+      <div class="field" data-key="us">
+        <label for="us">US / Canada</label>
+        <select id="us"></select>
+        <div class="hint">Half sizes supported</div>
+      </div>
+      <div class="field" data-key="uk">
+        <label for="uk">UK / Australia</label>
+        <select id="uk"></select>
+        <div class="hint">Letter sizes (A&ndash;Z+)</div>
+      </div>
+      <div class="field" data-key="eu">
+        <label for="eu">EU / ISO</label>
+        <select id="eu"></select>
+        <div class="hint">Equals circumference in mm</div>
+      </div>
+      <div class="field" data-key="jp">
+        <label for="jp">Japan / China</label>
+        <select id="jp"></select>
+        <div class="hint">Also used across much of Asia</div>
+      </div>
+    </div>
+
+    <div class="note" id="note">Tip: not sure of your size? Use the &ldquo;Measure a ring&rdquo; tab below.</div>
+  </div>
+
+  <!-- AD_SLOT -->
+  <div class="ad noprint">Advertisement</div>
+
+  <div class="tabs noprint">
+    <button class="tab on" data-tab="measure" type="button">Measure a ring</button>
+    <button class="tab" data-tab="strip" type="button">Printable sizer strip</button>
+    <button class="tab" data-tab="table" type="button">Full reference table</button>
+  </div>
+
+  <div class="panelbox" id="tab-measure">
+    <div class="card">
+      <h3 style="margin-top:0">Find your size from a ring you own</h3>
+      <p style="color:var(--muted);font-size:.9rem;margin-top:0">Place a ring you already wear flat on the screen and match its <b>inner edge</b> to the green circle. First, calibrate the screen so the circle is true-to-life.</p>
+      <div class="cal">
+        <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:6px">Calibration &mdash; slide until the bar below is exactly the width of any credit/bank card (85.6&nbsp;mm)</label>
+        <input type="range" id="calRange" min="2.5" max="6" step="0.01" value="3.78">
+        <div id="calBar" style="height:54px;background:linear-gradient(135deg,#1f2d25,#243329);border:1px dashed var(--accent);border-radius:8px;margin-top:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.78rem">Credit card width &mdash; 85.6 mm</div>
+      </div>
+      <div class="measure-controls" style="margin-top:16px">
+        <label style="font-size:.85rem">Circle size:</label>
+        <input type="range" id="ringRange" min="13" max="23" step="0.1" value="17" style="max-width:280px">
+        <span id="ringReadout" class="pill"></span>
+        <button class="btn primary" id="useMeasure" type="button">Use this size</button>
+      </div>
+      <div class="circles"><div class="ringc" id="ringCircle"><span id="ringCircleLab"></span></div></div>
+      <p style="color:var(--muted);font-size:.8rem;margin-bottom:0">Match the inner hole of the ring to the green circle, then tap &ldquo;Use this size&rdquo;. Calibration is saved on this device.</p>
+    </div>
+  </div>
+
+  <div class="panelbox hidden" id="tab-strip">
+    <div class="card">
+      <h3 style="margin-top:0">Printable paper ring sizer</h3>
+      <p style="color:var(--muted);font-size:.9rem;margin-top:0" class="noprint">Print this page at 100% scale (turn off &ldquo;fit to page&rdquo;), cut out a strip, wrap it around your finger and read the size where it overlaps. Each bar&rsquo;s length equals that size&rsquo;s inside circumference.</p>
+      <button class="btn primary noprint" id="printBtn" type="button" style="margin-bottom:12px">Print this strip</button>
+      <div id="stripList"></div>
+    </div>
+  </div>
+
+  <div class="panelbox hidden" id="tab-table">
+    <div class="card scrollx">
+      <h3 style="margin-top:0">Ring size conversion chart</h3>
+      <table class="ref" id="refTable"></table>
+    </div>
+  </div>
+
+  <div class="pro noprint">
+    <div>
+      <h3>RingFit Pro &mdash; Resize &amp; Gift Mode</h3>
+      <p>Save several people&rsquo;s sizes to a private profile on this device, generate a discreet share link or QR a partner can open without spoiling a surprise, and get a metal &amp; band-width allowance guide (wide bands fit tighter &mdash; size up a quarter to a half).</p>
+    </div>
+    <a class="btn primary" id="proBtn" href="#" target="_blank" rel="noopener">Get Pro</a>
+  </div>
+
+  <section class="content">
+    <h2>How to use this ring size converter</h2>
+    <p>Online jewelry shops list sizes in different national standards, which makes ordering &mdash; especially a gift or an international purchase &mdash; easy to get wrong. This tool removes the guesswork: type a single number in whichever system you know and read off the equivalent everywhere else. The conversions are based on the published relationship between a ring&rsquo;s <b>inside diameter</b>, its <b>inside circumference</b> (diameter &times; &pi;), and the standard size scales used in the US/Canada, UK/Australia, the EU/ISO 8653 system, and Japan.</p>
+    <p>If your measurement falls between two listed sizes, the converter snaps to the nearest standard size and tells you when you are between sizes. For comfort-fit or wide bands, rings sit tighter, so most jewelers recommend choosing a quarter to a half size larger than your bare measurement.</p>
+
+    <h2>Frequently asked questions</h2>
+    <h3>What is the most accurate way to find my ring size?</h3>
+    <p>Measure the inside diameter of a ring that already fits the right finger and enter it above, or measure the finger&rsquo;s circumference with a thin strip of paper. Diameter is the most precise input because it does not depend on how tightly the strip is pulled.</p>
+    <h3>Is a US 7 the same as a UK 7?</h3>
+    <p>No. The US and UK scales are completely different &mdash; a US 7 is roughly a UK N&frac12;. Always convert rather than copying the number across, which is exactly what this tool does for you.</p>
+    <h3>What does the EU / ISO number mean?</h3>
+    <p>The EU/ISO size is simply the inside circumference of the ring in millimetres, so an EU 54 ring measures about 54&nbsp;mm around the inside.</p>
+    <h3>Should I size up for a wide band?</h3>
+    <p>Usually yes. Bands wider than about 6&nbsp;mm feel snugger, so going up a quarter to a half size gives a comfortable fit.</p>
+  </section>
+
+  <footer>
+    Built by <a href="#">DevLoadout</a>
+  </footer>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"What is the most accurate way to find my ring size?","acceptedAnswer":{"@type":"Answer","text":"Measure the inside diameter of a ring that already fits the right finger and enter it, or measure the finger circumference with a thin strip of paper. Diameter is most precise because it does not depend on how tightly the strip is pulled."}},
+    {"@type":"Question","name":"Is a US 7 the same as a UK 7?","acceptedAnswer":{"@type":"Answer","text":"No. The US and UK scales are different. A US 7 is roughly a UK N and a half, so always convert between the systems rather than copying the number across."}},
+    {"@type":"Question","name":"What does the EU / ISO ring size mean?","acceptedAnswer":{"@type":"Answer","text":"The EU/ISO ring size equals the inside circumference of the ring in millimetres, so an EU 54 ring measures about 54 mm around the inside."}},
+    {"@type":"Question","name":"Should I size up for a wide band?","acceptedAnswer":{"@type":"Answer","text":"Usually yes. Bands wider than about 6 mm feel snugger, so choosing a quarter to a half size larger gives a comfortable fit."}}
+  ]
+}
+</script>
+
+<script>
+const PADDLE_CHECKOUT = "https://buy.paddle.com/REPLACE";
+
+/* ---- Standards lookup table ----
+   dia(mm), US/Canada, UK/Australia, EU/ISO, Japan. Built from published charts.
+   Circumference = diameter * PI. */
+const PI = Math.PI;
+const SIZES = [
+  [14.0,  "3",   "F",  "44",   "4"],
+  [14.4,  "3.5", "G",  "45",   "5"],
+  [14.8,  "4",   "H",  "46",   "6"],
+  [15.2,  "4.5", "I",  "48",   "7"],
+  [15.6,  "5",   "J½", "49",   "8"],
+  [16.0,  "5.5", "K½", "50",   "9"],
+  [16.5,  "6",   "L½", "52",   "11"],
+  [16.9,  "6.5", "M½", "53",   "12"],
+  [17.3,  "7",   "N½", "54",   "13"],
+  [17.7,  "7.5", "O½", "55",   "14"],
+  [18.1,  "8",   "P½", "57",   "16"],
+  [18.5,  "8.5", "Q½", "58",   "17"],
+  [18.9,  "9",   "R½", "59",   "18"],
+  [19.4,  "9.5", "S½", "61",   "19"],
+  [19.8,  "10",  "T½", "62",   "20"],
+  [20.2,  "10.5","U½", "63",   "22"],
+  [20.6,  "11",  "V½", "65",   "23"],
+  [21.0,  "11.5","W½", "66",   "24"],
+  [21.4,  "12",  "X½", "67",   "25"],
+  [21.8,  "12.5","Z",  "69",   "26"],
+  [22.2,  "13",  "Z+1","70",   "27"]
+];
+SIZES.forEach(r=>r.circ = +(r[0]*PI).toFixed(1));
+
+const KEYS = ["us","uk","eu","jp"];
+const selMap = {us:1, uk:2, eu:3, jp:4};
+
+KEYS.forEach(k=>{
+  const sel = document.getElementById(k);
+  let opts = '<option value="">—</option>';
+  SIZES.forEach((r,i)=>{ opts += '<option value="'+i+'">'+r[selMap[k]]+'</option>'; });
+  sel.innerHTML = opts;
+});
+
+function nearestIndexByDia(d){
+  let best=0, bd=Infinity;
+  SIZES.forEach((r,i)=>{ const diff=Math.abs(r[0]-d); if(diff<bd){bd=diff;best=i;} });
+  return {i:best, dist:bd};
+}
+
+function render(idx, fromKey, exact){
+  const dia = document.getElementById('dia');
+  const circ = document.getElementById('circ');
+  const note = document.getElementById('note');
+  const row = SIZES[idx];
+
+  if(fromKey!=='dia') dia.value = row[0].toFixed(1);
+  if(fromKey!=='circ') circ.value = row.circ.toFixed(1);
+
+  KEYS.forEach(k=>{ document.getElementById(k).value = String(idx); });
+
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('active'));
+  const af = document.querySelector('.field[data-key="'+fromKey+'"]');
+  if(af) af.classList.add('active');
+
+  if(exact===false){
+    note.innerHTML = 'Between sizes — nearest match shown: <b>US '+row[1]+' · UK '+row[2]+' · EU '+row[3]+' · JP '+row[4]+'</b> (Ø '+row[0].toFixed(1)+' mm).';
+  } else {
+    note.innerHTML = 'Match: <b>US '+row[1]+' · UK '+row[2]+' · EU '+row[3]+' · JP '+row[4]+'</b> — inside Ø '+row[0].toFixed(1)+' mm, circumference '+row.circ.toFixed(1)+' mm.';
+  }
+}
+
+function fromDiameter(d, fromKey){
+  if(isNaN(d)||d<=0){ return; }
+  const r = nearestIndexByDia(d);
+  render(r.i, fromKey, r.dist<=0.21);
+}
+
+document.getElementById('dia').addEventListener('input', function(e){
+  const v=parseFloat(e.target.value);
+  if(isNaN(v)){clearOthers('dia');return;}
+  fromDiameter(v,'dia');
+});
+document.getElementById('circ').addEventListener('input', function(e){
+  const v=parseFloat(e.target.value);
+  if(isNaN(v)){clearOthers('circ');return;}
+  fromDiameter(v/PI,'circ');
+});
+KEYS.forEach(k=>{
+  document.getElementById(k).addEventListener('change', function(e){
+    if(e.target.value===''){return;}
+    render(parseInt(e.target.value,10),k,true);
+  });
+});
+
+function clearOthers(keep){
+  document.getElementById('note').textContent='';
+  if(keep!=='dia') document.getElementById('dia').value='';
+  if(keep!=='circ') document.getElementById('circ').value='';
+  KEYS.forEach(k=>{ if(k!==keep) document.getElementById(k).value=''; });
+}
+
+document.getElementById('clearBtn').addEventListener('click', function(){
+  document.getElementById('dia').value='';
+  document.getElementById('circ').value='';
+  KEYS.forEach(k=>{document.getElementById(k).value='';});
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('active'));
+  document.getElementById('note').innerHTML='Tip: not sure of your size? Use the “Measure a ring” tab below.';
+});
+
+/* ---- Tabs ---- */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click', function(){
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    ['measure','strip','table'].forEach(id=>{
+      document.getElementById('tab-'+id).classList.toggle('hidden', id!==t.dataset.tab);
+    });
+  });
+});
+
+/* ---- Measure tool with calibration ---- */
+const calRange=document.getElementById('calRange');
+const calBar=document.getElementById('calBar');
+const ringRange=document.getElementById('ringRange');
+const ringCircle=document.getElementById('ringCircle');
+const ringCircleLab=document.getElementById('ringCircleLab');
+const ringReadout=document.getElementById('ringReadout');
+const CARD_MM=85.6;
+
+function loadPx(){ const s=localStorage.getItem('ringfit_pxmm'); return s?parseFloat(s):3.78; }
+function pxPerMm(){ return parseFloat(calRange.value); }
+
+function drawCal(){
+  const ppm=pxPerMm();
+  calBar.style.width=(CARD_MM*ppm)+'px';
+  calBar.style.maxWidth='100%';
+  try{ localStorage.setItem('ringfit_pxmm', ppm); }catch(e){}
+  drawRing();
+}
+function drawRing(){
+  const ppm=pxPerMm();
+  const dia=parseFloat(ringRange.value);
+  const px=dia*ppm;
+  ringCircle.style.width=px+'px';
+  ringCircle.style.height=px+'px';
+  const r=SIZES[nearestIndexByDia(dia).i];
+  ringCircleLab.textContent='Ø '+dia.toFixed(1)+' mm';
+  ringReadout.textContent='≈ US '+r[1]+' · UK '+r[2]+' · EU '+r[3];
+}
+calRange.value=loadPx();
+calRange.addEventListener('input',drawCal);
+ringRange.addEventListener('input',drawRing);
+document.getElementById('useMeasure').addEventListener('click',function(){
+  const d=parseFloat(ringRange.value);
+  document.getElementById('dia').value=d.toFixed(1);
+  fromDiameter(d,'dia');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+drawCal();
+
+/* ---- Printable strip ---- */
+(function buildStrip(){
+  const list=document.getElementById('stripList');
+  let html='';
+  SIZES.forEach(r=>{
+    const w = r.circ*3.7795275591; // mm -> CSS px at 96dpi
+    html+='<div class="strip-row">'+
+      '<span class="strip-lab">US '+r[1]+' &nbsp;/&nbsp; UK '+r[2]+'</span>'+
+      '<div class="strip-bar" style="width:'+w+'px"></div>'+
+      '<span style="font-size:.78rem;color:var(--muted)">'+r.circ.toFixed(0)+' mm · EU '+r[3]+'</span>'+
+      '</div>';
+  });
+  list.innerHTML=html;
+})();
+document.getElementById('printBtn').addEventListener('click',function(){window.print();});
+
+/* ---- Reference table ---- */
+(function buildTable(){
+  const t=document.getElementById('refTable');
+  let h='<thead><tr><th>Diameter (mm)</th><th>Circumf. (mm)</th><th>US/Canada</th><th>UK/Aus</th><th>EU/ISO</th><th>Japan</th></tr></thead><tbody>';
+  SIZES.forEach(r=>{
+    h+='<tr><td>'+r[0].toFixed(1)+'</td><td>'+r.circ.toFixed(1)+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td></tr>';
+  });
+  h+='</tbody>';
+  t.innerHTML=h;
+})();
+
+/* ---- Pro link ---- */
+document.getElementById('proBtn').href = PADDLE_CHECKOUT;
+</script>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spaced Repetition Schedule Calculator | Review Dates + .ics</title>
+<meta name="description" content="Free spaced repetition schedule calculator. Enter the date you studied, pick a 1-3-7-14-30 (Leitner) or SM-2 interval, and get exact review dates plus a downloadable .ics calendar with reminders.">
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c232d; --border:#2a3340;
+    --txt:#e6edf3; --muted:#8b97a5; --accent:#46d39a; --accent-dim:#2f9d75;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent)}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 18px 60px}
+  header{text-align:center;margin-bottom:26px}
+  .logo{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;color:var(--muted);margin-bottom:14px}
+  .logo .dot{width:11px;height:11px;border-radius:3px;background:var(--accent)}
+  h1{font-size:27px;line-height:1.25;margin:0 0 8px}
+  h1 .hl{color:var(--accent)}
+  .sub{color:var(--muted);font-size:15.5px;max-width:620px;margin:0 auto}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:18px 0}
+  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px;letter-spacing:.02em}
+  input[type=text],input[type=date],select{
+    width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--txt);
+    border-radius:9px;padding:11px 12px;font-size:15px;font-family:inherit;outline:none;
+  }
+  input:focus,select:focus{border-color:var(--accent)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  .custom-wrap{margin-top:12px}
+  .presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+  .chip{
+    background:var(--panel2);border:1px solid var(--border);color:var(--muted);
+    border-radius:999px;padding:7px 13px;font-size:13px;cursor:pointer;transition:.12s;
+  }
+  .chip:hover{border-color:var(--accent-dim);color:var(--txt)}
+  .chip.active{background:rgba(70,211,154,.13);border-color:var(--accent);color:var(--accent)}
+  .btn{
+    background:var(--accent);color:#06281c;border:none;border-radius:9px;padding:11px 18px;
+    font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s;
+  }
+  .btn:hover{filter:brightness(1.07)}
+  .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--txt)}
+  .btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.sm{padding:8px 13px;font-size:13px}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+  /* items */
+  .item{border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;background:var(--panel)}
+  .item-head{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+  .item-head .f{flex:1;min-width:160px}
+  .item-head .rm{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:4px 8px;border-radius:7px}
+  .item-head .rm:hover{color:#ff6b6b;background:rgba(255,107,107,.1)}
+  .results{margin-top:14px}
+  .timeline{display:flex;align-items:center;gap:0;overflow-x:auto;padding:8px 2px 14px}
+  .tl-node{display:flex;flex-direction:column;align-items:center;min-width:62px;flex-shrink:0}
+  .tl-dot{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(70,211,154,.15)}
+  .tl-dot.start{background:var(--muted);box-shadow:0 0 0 4px rgba(139,151,165,.13)}
+  .tl-line{height:2px;flex:1;min-width:18px;background:var(--border);margin-bottom:26px}
+  .tl-lbl{font-size:11px;color:var(--muted);margin-top:6px;text-align:center;white-space:nowrap}
+  .tl-day{font-size:11px;color:var(--accent);font-weight:600}
+  .rev-list{list-style:none;padding:0;margin:12px 0 0}
+  .rev-list li{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:10px 12px;border:1px solid var(--border);border-radius:9px;margin-bottom:7px;background:var(--panel2);font-size:14.5px}
+  .rev-list li .lab{display:flex;align-items:center;gap:10px}
+  .rev-list .num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;
+    border-radius:7px;background:rgba(70,211,154,.14);color:var(--accent);font-size:12px;font-weight:700;flex-shrink:0}
+  .rev-list .off{color:var(--muted);font-size:12.5px}
+  .rev-list li.start{opacity:.8}
+  .rev-list li.start .num{background:rgba(139,151,165,.18);color:var(--muted)}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--accent);color:#06281c;font-weight:700;padding:11px 18px;border-radius:9px;
+    opacity:0;pointer-events:none;transition:.25s;font-size:14px;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* pro */
+  .pro{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    border:1px dashed var(--accent-dim);background:rgba(70,211,154,.05);border-radius:var(--radius);padding:16px 18px;margin:18px 0}
+  .pro .tag{display:inline-block;background:var(--accent);color:#06281c;font-size:11px;font-weight:800;
+    padding:2px 8px;border-radius:6px;letter-spacing:.04em;margin-bottom:6px}
+  .pro p{margin:0;font-size:13.5px;color:var(--muted);max-width:520px}
+  .ad{margin:18px 0;min-height:1px}
+  .content{margin-top:34px}
+  .content h2{font-size:20px;margin:26px 0 10px}
+  .content h3{font-size:15.5px;margin:18px 0 5px}
+  .content p,.content li{color:#c6d0da;font-size:15px}
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:40px;padding-top:20px;border-top:1px solid var(--border)}
+  .opt-row{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px}
+  .opt-row label.inline{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--txt);font-weight:500;margin:0;cursor:pointer}
+  .opt-row input[type=number]{width:64px;background:var(--panel2);border:1px solid var(--border);color:var(--txt);border-radius:7px;padding:5px 7px;font-size:14px}
+  .opt-row input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="logo"><span class="dot"></span> DevLoadout</div>
+    <h1>Spaced Repetition <span class="hl">Schedule Calculator</span></h1>
+    <p class="sub">Enter the day you studied, pick a review interval, and get the exact calendar dates — plus a downloadable <code>.ics</code> calendar with reminders. 100% in your browser.</p>
+  </header>
+
+  <div class="card">
+    <div class="grid">
+      <div>
+        <label for="preset">Interval preset</label>
+        <select id="preset">
+          <option value="1,3,7,14,30">1-3-7-14-30 days (Leitner classic)</option>
+          <option value="1,3,7,14,30,60,120">1-3-7-14-30-60-120 (long-term)</option>
+          <option value="1,6,15,35">1-6-15-35 (SM-2 style)</option>
+          <option value="custom">Custom — comma-separated day offsets</option>
+        </select>
+        <div class="custom-wrap" id="customWrap" style="display:none">
+          <input type="text" id="customInput" placeholder="e.g. 1, 4, 9, 20, 45" value="1, 4, 9, 20, 45">
+          <div class="hint">Days after the study date. Commas separate each review.</div>
+        </div>
+      </div>
+      <div>
+        <label for="alarmTime">Reminder time (in .ics)</label>
+        <input type="text" id="alarmTime" placeholder="HH:MM (24h)" value="18:00">
+        <div class="hint">All-day events fire a reminder at this local time.</div>
+      </div>
+    </div>
+
+    <div class="opt-row">
+      <label class="inline"><input type="checkbox" id="includeStart" checked> Include study day (Review 0) in list</label>
+    </div>
+
+    <div style="margin-top:18px">
+      <label>Study items / decks</label>
+      <div id="items"></div>
+      <button class="btn ghost sm" id="addItem" type="button">+ Add another item</button>
+    </div>
+  </div>
+
+  <!-- AD_SLOT -->
+  <div class="ad"></div>
+
+  <div id="output"></div>
+
+  <div class="pro">
+    <div>
+      <span class="tag">PRO</span>
+      <p>Batch-import a whole list of topics with their learn-dates (paste or CSV) and get one merged, de-duplicated review calendar across everything — plus auto-rescheduling presets and a printable weekly review sheet.</p>
+    </div>
+    <a class="btn sm" id="proBtn" href="#">Get Pro</a>
+  </div>
+
+  <div class="content">
+    <h2>How the spaced repetition schedule calculator works</h2>
+    <p>Spaced repetition fights the forgetting curve by reviewing material at expanding intervals instead of cramming. The classic <strong>1-3-7-14-30</strong> Leitner schedule means you review one day after studying, then three days, then a week, two weeks, and a month later. Each successful recall stretches the next gap, so a topic moves from short-term to long-term memory with the fewest possible reviews. This tool turns that abstract pattern into real calendar dates you can actually act on.</p>
+    <p>Type the date you learned something (it defaults to today), choose a preset or enter your own comma-separated offsets, and every review date is computed instantly. Add multiple items to track several decks, chapters, or vocab sets in parallel. When the schedule looks right, download a <code>.ics</code> file with a built-in reminder alarm and import it into Google Calendar, Apple Calendar, or Outlook — or copy the dates as plain text. Everything runs locally; nothing you enter is uploaded or stored.</p>
+
+    <h3>Frequently asked questions</h3>
+    <p><strong>Which interval should I use?</strong> For exams in 1-2 months, 1-3-7-14-30 is ideal. For permanent knowledge (a language), add 60 and 120. SM-2 style (1-6-15-35) mirrors Anki's early curve.</p>
+    <p><strong>Will the reminders work on my phone?</strong> Yes — the .ics includes a VALARM, so most calendar apps notify you at your chosen time on each review day.</p>
+    <p><strong>Is my data private?</strong> Completely. All date math and .ics creation happen in your browser. No account, no tracking of your study topics.</p>
+  </div>
+
+  <footer>Built by DevLoadout</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PADDLE_CHECKOUT = "https://buy.paddle.com/REPLACE";
+document.getElementById('proBtn').href = PADDLE_CHECKOUT;
+
+const DAY = 86400000;
+const WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const presetSel = document.getElementById('preset');
+const customWrap = document.getElementById('customWrap');
+const customInput = document.getElementById('customInput');
+const includeStart = document.getElementById('includeStart');
+const alarmTime = document.getElementById('alarmTime');
+const itemsEl = document.getElementById('items');
+const output = document.getElementById('output');
+
+function todayISO(){
+  const d = new Date();
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function pad(n){return String(n).padStart(2,'0');}
+
+function parseLocalDate(iso){
+  // iso = yyyy-mm-dd -> local Date at midnight
+  if(!iso) return null;
+  const p = iso.split('-').map(Number);
+  if(p.length!==3 || p.some(isNaN)) return null;
+  return new Date(p[0], p[1]-1, p[2]);
+}
+function fmt(d){ return WD[d.getDay()]+', '+MO[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear(); }
+
+function getOffsets(){
+  let raw = presetSel.value === 'custom' ? customInput.value : presetSel.value;
+  let arr = raw.split(',').map(s=>parseInt(s.trim(),10)).filter(n=>!isNaN(n) && n>=0);
+  // unique + sorted ascending
+  arr = [...new Set(arr)].sort((a,b)=>a-b);
+  if(includeStart.checked && !arr.includes(0)) arr.unshift(0);
+  if(!includeStart.checked) arr = arr.filter(n=>n>0);
+  return arr;
+}
+
+// ---- items state ----
+let items = [];
+let nextId = 1;
+function addItem(name, date){
+  items.push({id: nextId++, name: name||'', date: date||todayISO()});
+  renderItems();
+  render();
+}
+function renderItems(){
+  itemsEl.innerHTML = '';
+  items.forEach(it=>{
+    const row = document.createElement('div');
+    row.className = 'item-head';
+    row.style.marginBottom = '12px';
+    row.innerHTML =
+      '<div class="f"><label>Topic / deck name</label>'+
+        '<input type="text" data-id="'+it.id+'" data-k="name" placeholder="e.g. Spanish verbs ch.4" value="'+escAttr(it.name)+'"></div>'+
+      '<div class="f"><label>Date studied</label>'+
+        '<input type="date" data-id="'+it.id+'" data-k="date" value="'+it.date+'"></div>'+
+      (items.length>1 ? '<button class="rm" title="Remove" data-rm="'+it.id+'">&times;</button>' : '');
+    itemsEl.appendChild(row);
+  });
+}
+itemsEl.addEventListener('input', e=>{
+  const id = +e.target.dataset.id, k = e.target.dataset.k;
+  if(!id) return;
+  const it = items.find(x=>x.id===id);
+  if(it){ it[k] = e.target.value; render(); }
+});
+itemsEl.addEventListener('click', e=>{
+  const rm = e.target.dataset.rm;
+  if(rm){ items = items.filter(x=>x.id!==+rm); renderItems(); render(); }
+});
+
+document.getElementById('addItem').addEventListener('click', ()=>addItem('', todayISO()));
+presetSel.addEventListener('change', ()=>{
+  customWrap.style.display = presetSel.value==='custom' ? 'block':'none';
+  render();
+});
+customInput.addEventListener('input', render);
+includeStart.addEventListener('change', render);
+alarmTime.addEventListener('input', render);
+
+// ---- schedule computation ----
+function scheduleFor(it){
+  const base = parseLocalDate(it.date);
+  if(!base) return null;
+  const offsets = getOffsets();
+  return offsets.map(off=>{
+    const d = new Date(base.getTime()+off*DAY);
+    return {off, date:d};
+  });
+}
+
+function render(){
+  const offsets = getOffsets();
+  if(offsets.length===0){
+    output.innerHTML = '<div class="card"><p class="hint" style="margin:0">Enter at least one valid day offset.</p></div>';
+    return;
+  }
+  let html = '';
+  items.forEach(it=>{
+    const sched = scheduleFor(it);
+    const title = it.name.trim() || 'Untitled item';
+    html += '<div class="item">';
+    html += '<div style="font-weight:700;font-size:16px;margin-bottom:2px">'+escHtml(title)+'</div>';
+    if(!sched){
+      html += '<p class="hint">Pick a valid study date.</p></div>';
+      return;
+    }
+    html += '<div class="hint" style="margin-bottom:8px">'+sched.length+' review'+(sched.length>1?'s':'')+' scheduled</div>';
+    // timeline
+    html += '<div class="timeline">';
+    sched.forEach((s,i)=>{
+      if(i>0) html += '<div class="tl-line"></div>';
+      const isStart = s.off===0;
+      html += '<div class="tl-node">'+
+        '<div class="tl-dot'+(isStart?' start':'')+'"></div>'+
+        '<div class="tl-lbl">'+WD[s.date.getDay()]+' '+MO[s.date.getMonth()]+' '+s.date.getDate()+'</div>'+
+        '<div class="tl-day">'+(isStart?'study':'+'+s.off+'d')+'</div>'+
+      '</div>';
+    });
+    html += '</div>';
+    // list
+    html += '<ul class="rev-list">';
+    let rn = 0;
+    sched.forEach(s=>{
+      const isStart = s.off===0;
+      const num = isStart ? '0' : String(++rn);
+      html += '<li class="'+(isStart?'start':'')+'">'+
+        '<span class="lab"><span class="num">'+num+'</span>'+
+        '<span>'+(isStart?'Studied':'Review '+rn)+': <strong>'+fmt(s.date)+'</strong></span></span>'+
+        '<span class="off">'+(isStart?'day 0':'+'+s.off+' days')+'</span></li>';
+    });
+    html += '</ul>';
+    html += '</div>';
+  });
+
+  if(items.length){
+    html += '<div class="card"><div class="actions">'+
+      '<button class="btn" id="dlIcs" type="button">&#128197; Download .ics calendar</button>'+
+      '<button class="btn ghost" id="copyTxt" type="button">&#128203; Copy dates as text</button>'+
+      '</div><div class="hint">The .ics covers every review across all items, with a reminder alarm.</div></div>';
+  }
+  output.innerHTML = html;
+
+  const dl = document.getElementById('dlIcs');
+  const cp = document.getElementById('copyTxt');
+  if(dl) dl.onclick = downloadIcs;
+  if(cp) cp.onclick = copyText;
+}
+
+function plainText(){
+  let lines = [];
+  items.forEach(it=>{
+    const sched = scheduleFor(it);
+    if(!sched) return;
+    lines.push((it.name.trim()||'Untitled item')+':');
+    let rn=0;
+    sched.forEach(s=>{
+      if(s.off===0) lines.push('  Studied: '+fmt(s.date));
+      else lines.push('  Review '+(++rn)+': '+fmt(s.date)+' (+'+s.off+' days)');
+    });
+    lines.push('');
+  });
+  return lines.join('\n').trim();
+}
+
+function copyText(){
+  const txt = plainText();
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>toast('Copied to clipboard'), fallbackCopy);
+  } else fallbackCopy();
+  function fallbackCopy(){
+    const ta = document.createElement('textarea');
+    ta.value = txt; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); toast('Copied to clipboard'); }catch(e){ toast('Copy failed'); }
+    document.body.removeChild(ta);
+  }
+}
+
+function icsDate(d){ return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate()); }
+function icsStamp(){
+  const d = new Date();
+  return d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+pad(d.getUTCSeconds())+'Z';
+}
+function escIcs(s){ return String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n'); }
+
+function downloadIcs(){
+  const at = (alarmTime.value.match(/^(\d{1,2}):(\d{2})$/));
+  const ah = at ? Math.min(23,+at[1]) : 18;
+  const am = at ? Math.min(59,+at[2]) : 0;
+  const stamp = icsStamp();
+  let ev = '';
+  let count = 0;
+  items.forEach(it=>{
+    const sched = scheduleFor(it);
+    if(!sched) return;
+    const name = it.name.trim() || 'Untitled item';
+    let rn=0;
+    sched.forEach(s=>{
+      if(s.off===0 && !includeStart.checked) return;
+      const isStart = s.off===0;
+      const label = isStart ? 'Studied: '+name : 'Review '+(++rn)+': '+name;
+      // timed event at alarm time so notifications are reliable
+      const start = new Date(s.date.getFullYear(), s.date.getMonth(), s.date.getDate(), ah, am, 0);
+      const end = new Date(start.getTime()+30*60000);
+      const dt = d=>d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'T'+pad(d.getHours())+pad(d.getMinutes())+'00';
+      count++;
+      ev +=
+        'BEGIN:VEVENT\r\n'+
+        'UID:'+stamp+'-'+count+'@devloadout.srs\r\n'+
+        'DTSTAMP:'+stamp+'\r\n'+
+        'DTSTART:'+dt(start)+'\r\n'+
+        'DTEND:'+dt(end)+'\r\n'+
+        'SUMMARY:'+escIcs(label)+'\r\n'+
+        'DESCRIPTION:'+escIcs('Spaced repetition review'+(isStart?'':' (+'+s.off+' days after studying)'))+'\r\n'+
+        'BEGIN:VALARM\r\n'+
+        'ACTION:DISPLAY\r\n'+
+        'DESCRIPTION:'+escIcs(label)+'\r\n'+
+        'TRIGGER:PT0M\r\n'+
+        'END:VALARM\r\n'+
+        'END:VEVENT\r\n';
+    });
+  });
+  if(count===0){ toast('Nothing to export'); return; }
+  const ics =
+    'BEGIN:VCALENDAR\r\n'+
+    'VERSION:2.0\r\n'+
+    'PRODID:-//DevLoadout//Spaced Repetition Calculator//EN\r\n'+
+    'CALSCALE:GREGORIAN\r\n'+
+    ev+
+    'END:VCALENDAR\r\n';
+  const blob = new Blob([ics], {type:'text/calendar'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'review-schedule.ics';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  toast('Calendar downloaded');
+}
+
+let toastT;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>t.classList.remove('show'), 1900);
+}
+
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escAttr(s){return escHtml(s).replace(/"/g,'&quot;');}
+
+// init
+addItem('', todayISO());
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"Which spaced repetition interval should I use?",
+     "acceptedAnswer":{"@type":"Answer","text":"For an exam in 1-2 months, the 1-3-7-14-30 day Leitner schedule is ideal. For permanent knowledge such as a language, extend it with 60 and 120 days. The SM-2 style 1-6-15-35 mirrors the early review curve used by Anki."}},
+    {"@type":"Question","name":"Will the reminders work on my phone?",
+     "acceptedAnswer":{"@type":"Answer","text":"Yes. The downloaded .ics file includes a VALARM, so Google Calendar, Apple Calendar, and Outlook will notify you at your chosen reminder time on each review day."}},
+    {"@type":"Question","name":"Is my study data private?",
+     "acceptedAnswer":{"@type":"Answer","text":"Completely. All date math and .ics file generation happen locally in your browser. Nothing you enter is uploaded, stored, or tracked."}}
+  ]
+}
+</script>

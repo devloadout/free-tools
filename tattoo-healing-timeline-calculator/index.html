@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tattoo Healing Timeline Calculator — Safe Dates</title>
+<meta name="description" content="Free tattoo healing timeline calculator. Enter your tattoo date and get personalized calendar dates for when you can swim, work out, sweat, shower long, and tan after a new tattoo.">
+<style>
+  :root{
+    --bg:#0e1116; --bg2:#161b22; --bg3:#1d242e; --line:#2a323d;
+    --txt:#e6edf3; --muted:#93a1b0; --accent:#46d39a; --accent-d:#2fae7d;
+    --warn:#f0b13a; --danger:#f06f6f; --ok:#46d39a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent)}
+  .wrap{max-width:880px; margin:0 auto; padding:24px 18px 60px}
+  header.hero{text-align:center; padding:30px 0 12px}
+  .badge{display:inline-block; font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); border:1px solid var(--line); background:var(--bg2);
+    padding:5px 12px; border-radius:999px; margin-bottom:14px}
+  h1{font-size:clamp(26px,4.4vw,38px); line-height:1.15; margin:0 0 10px}
+  h1 .hl{color:var(--accent)}
+  .sub{color:var(--muted); max-width:620px; margin:0 auto; font-size:16px}
+  .card{background:var(--bg2); border:1px solid var(--line); border-radius:16px; padding:22px; margin-top:22px}
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media(max-width:620px){.grid{grid-template-columns:1fr}}
+  label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px; font-weight:600}
+  input,select{
+    width:100%; background:var(--bg3); border:1px solid var(--line); color:var(--txt);
+    padding:12px 12px; border-radius:10px; font-size:15px; font-family:inherit;
+  }
+  input:focus,select:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(70,211,154,.15)}
+  .row{margin-bottom:16px}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; cursor:pointer; border:none;
+    background:var(--accent); color:#06231a; font-weight:700; font-size:15px;
+    padding:13px 22px; border-radius:10px; font-family:inherit; transition:.15s;
+  }
+  .btn:hover{background:var(--accent-d); color:#04190f}
+  .btn.secondary{background:transparent; color:var(--accent); border:1px solid var(--line)}
+  .btn.secondary:hover{background:var(--bg3); color:var(--accent)}
+  .controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:4px}
+
+  /* TODAY STATUS */
+  #results{display:none}
+  .today{
+    background:linear-gradient(135deg,rgba(70,211,154,.12),rgba(70,211,154,.02));
+    border:1px solid var(--accent); border-radius:16px; padding:20px 22px; margin-top:22px;
+  }
+  .today h2{margin:0 0 4px; font-size:18px}
+  .today .day{color:var(--accent); font-weight:700}
+  .phasebar{height:10px; border-radius:999px; background:var(--bg3); overflow:hidden; margin:14px 0 6px}
+  .phasebar > i{display:block; height:100%; background:linear-gradient(90deg,var(--accent),#7fe9c2)}
+  .phaselabel{font-size:13px; color:var(--muted); display:flex; justify-content:space-between}
+  .cando{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px}
+  .pill{display:inline-flex; align-items:center; gap:7px; font-size:13.5px; font-weight:600;
+    padding:8px 12px; border-radius:999px; border:1px solid var(--line); background:var(--bg2)}
+  .pill .dot{width:9px; height:9px; border-radius:50%}
+  .pill.yes{color:var(--ok)} .pill.yes .dot{background:var(--ok)}
+  .pill.no{color:var(--danger)} .pill.no .dot{background:var(--danger)}
+  .pill.soon{color:var(--warn)} .pill.soon .dot{background:var(--warn)}
+
+  /* TIMELINE */
+  .tl{margin-top:8px; position:relative; padding-left:8px}
+  .ev{display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--line)}
+  .ev:last-child{border-bottom:none}
+  .ev .icn{flex:0 0 40px; height:40px; width:40px; border-radius:10px; display:flex; align-items:center;
+    justify-content:center; font-size:20px; background:var(--bg3); border:1px solid var(--line)}
+  .ev.done .icn{background:rgba(70,211,154,.15); border-color:var(--accent)}
+  .ev .meta{flex:1; min-width:0}
+  .ev .meta .t{font-weight:700; font-size:15px}
+  .ev .meta .d{color:var(--accent); font-weight:600; font-size:14px}
+  .ev.done .meta .d{color:var(--ok)}
+  .ev .meta .desc{color:var(--muted); font-size:13.5px; margin-top:2px}
+  .ev .when{flex:0 0 auto; text-align:right; font-size:12px; color:var(--muted); white-space:nowrap}
+  .ev .when .badge2{display:inline-block; padding:3px 8px; border-radius:999px; font-weight:700; font-size:11px}
+  .ev .when .badge2.done{background:rgba(70,211,154,.15); color:var(--accent)}
+  .ev .when .badge2.wait{background:var(--bg3); color:var(--muted)}
+
+  .section-title{font-size:13px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:26px 0 4px}
+  .disclaimer{font-size:12.5px; color:var(--muted); background:var(--bg2); border:1px dashed var(--line);
+    border-radius:12px; padding:12px 14px; margin-top:18px}
+
+  /* PRO */
+  .pro{margin-top:22px; background:var(--bg2); border:1px solid var(--line); border-radius:16px;
+    padding:18px 20px; display:flex; gap:16px; align-items:center; flex-wrap:wrap; justify-content:space-between}
+  .pro .ptxt{flex:1; min-width:240px}
+  .pro h3{margin:0 0 4px; font-size:16px}
+  .pro p{margin:0; color:var(--muted); font-size:14px}
+  .pro .protag{font-size:11px; font-weight:800; letter-spacing:.06em; color:var(--accent); text-transform:uppercase}
+
+  /* CONTENT */
+  .content{margin-top:40px}
+  .content h2{font-size:22px; margin:30px 0 8px}
+  .content h3{font-size:16px; margin:20px 0 4px}
+  .content p{color:#c4cfda; font-size:15px}
+  details{border:1px solid var(--line); border-radius:12px; padding:2px 16px; margin:10px 0; background:var(--bg2)}
+  details summary{cursor:pointer; font-weight:600; padding:12px 0; list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details summary::before{content:"+ "; color:var(--accent); font-weight:800}
+  details[open] summary::before{content:"– "}
+  details p{margin:0 0 14px; color:var(--muted); font-size:14.5px}
+  .adwrap{margin:28px 0; text-align:center; min-height:1px}
+
+  footer{text-align:center; color:var(--muted); font-size:13px; padding:40px 0 10px; border-top:1px solid var(--line); margin-top:40px}
+  footer a{font-weight:600}
+  .hide{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="badge">Free · No signup · 100% private</span>
+    <h1>Tattoo Healing <span class="hl">Timeline</span> Calculator</h1>
+    <p class="sub">Enter the day you got inked and get your personal calendar dates for when it's safe to swim, work out, sweat, take long showers, tan, and when you're fully healed.</p>
+  </header>
+
+  <!-- INPUT CARD -->
+  <section class="card" aria-label="Calculator inputs">
+    <div class="row">
+      <label for="date">Date you got your tattoo</label>
+      <input type="date" id="date">
+    </div>
+    <div class="grid">
+      <div class="row">
+        <label for="size">Size / coverage</label>
+        <select id="size">
+          <option value="0">Small (line work, finger, wrist) — heals fast</option>
+          <option value="1" selected>Medium (forearm, calf, shoulder)</option>
+          <option value="2">Large / heavy color or shading</option>
+          <option value="3">Very large (sleeve, back piece, full session)</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="place">Placement</label>
+        <select id="place">
+          <option value="0" selected>Normal (arm, leg, chest, back)</option>
+          <option value="1">High-movement / friction (hand, foot, joint, ribs)</option>
+        </select>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn" id="calc">Calculate my timeline</button>
+      <button class="btn secondary" id="today">Use today's date</button>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results">
+
+    <!-- WHAT CAN I DO TODAY -->
+    <div class="today">
+      <h2>Today you're on <span class="day" id="dayNum">Day 0</span> · <span id="phaseName">Fresh wound</span></h2>
+      <div class="phasebar"><i id="phaseFill" style="width:0%"></i></div>
+      <div class="phaselabel"><span>Day 0</span><span id="fullDateLabel">Fully healed: —</span></div>
+      <div class="cando" id="cando"></div>
+    </div>
+
+    <!-- AD_SLOT -->
+    <div class="adwrap"><!-- AD_SLOT --></div>
+
+    <h3 class="section-title">Your milestone calendar</h3>
+    <div class="card" style="margin-top:8px">
+      <div class="tl" id="timeline"></div>
+    </div>
+
+    <div class="controls" style="margin-top:16px">
+      <button class="btn secondary" id="copy">Copy summary</button>
+      <button class="btn secondary" id="print">Print / Save as PDF</button>
+    </div>
+
+    <div class="disclaimer">
+      These dates are general aftercare estimates based on typical healing, not medical advice. Healing speed varies by person, ink, and aftercare. Always follow your artist's instructions, and see a doctor if you notice spreading redness, pus, fever, or worsening pain.
+    </div>
+
+    <!-- PRO UPSELL -->
+    <div class="pro">
+      <div class="ptxt">
+        <div class="protag">Pro · for tattoo artists &amp; shops</div>
+        <h3>White-label aftercare cards for your clients</h3>
+        <p>Add your logo, custom aftercare notes &amp; product picks, then hand every client a branded printable timeline + a "safe to swim today" reminder link.</p>
+      </div>
+      <a class="btn" id="proBtn" href="#">Get Pro</a>
+    </div>
+
+  </section>
+
+  <!-- SUPPORTING CONTENT / SEO -->
+  <article class="content">
+    <h2>How the tattoo healing timeline works</h2>
+    <p>A new tattoo is an open wound, and healing happens in predictable stages. This calculator takes your tattoo date and maps those stages onto real calendar dates, then adjusts them based on your tattoo's size and placement — bigger, heavily-shaded pieces and high-friction spots like hands, feet and joints simply take longer to close up and re-skin. The result is a clear answer to the questions people anxiously search the day after getting inked: <strong>when can I swim, when can I work out, and when can I shower normally?</strong></p>
+    <p>In the first 2–3 days your tattoo oozes plasma and ink and stays swollen, so you keep it clean and avoid soaking it. Around days 3–6 the surface tightens and starts to flake and itch — this is normal, and picking or scratching is what causes scabbing and ink loss. By weeks 2–3 the outer skin looks healed, which is when light exercise and gentle sweating become reasonable. The deeper layers, however, keep rebuilding for up to a month or more, which is why <strong>swimming, long soaks, and direct sun</strong> stay off-limits longest: submerging or burning the area before it has fully closed is the fastest way to fade your ink or pick up an infection.</p>
+
+    <h2>Frequently asked questions</h2>
+    <details><summary>When can I swim after a new tattoo?</summary><p>Most artists say no pools, lakes, oceans, or hot tubs until the tattoo is fully healed — typically around 3 to 4 weeks, and longer for large pieces. Submerging an unhealed tattoo risks infection and ink loss. The calculator gives you the exact date based on your tattoo.</p></details>
+    <details><summary>When can I work out or go to the gym?</summary><p>Light, low-sweat movement is usually fine after a few days, but heavy sweating and equipment friction should wait roughly 1–2 weeks. Avoid exercises that stretch or rub the tattooed area until the surface has finished peeling.</p></details>
+    <details><summary>When can I take a long bath or shower?</summary><p>Short, lukewarm showers are fine almost immediately — just don't soak the tattoo or blast it directly. Long baths, soaking, and hot tubs should wait until the tattoo is fully healed, the same window as swimming.</p></details>
+    <details><summary>When can I expose my tattoo to the sun?</summary><p>Keep a healing tattoo out of direct sun while it's peeling, since UV damages new ink and can burn the raw skin. Once healed, always use SPF 30+ on the tattoo to keep it sharp and prevent fading.</p></details>
+    <details><summary>Is this medical advice?</summary><p>No. These are general aftercare estimates. Always follow your tattoo artist's specific instructions and consult a doctor if you see signs of infection.</p></details>
+  </article>
+
+  <footer>
+    Built by <a href="#" id="footerLink">DevLoadout</a> · Your dates never leave your browser.
+  </footer>
+
+</div>
+
+<!-- JSON-LD FAQ -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"When can I swim after a new tattoo?","acceptedAnswer":{"@type":"Answer","text":"Most artists say no pools, lakes, oceans, or hot tubs until the tattoo is fully healed — typically around 3 to 4 weeks, and longer for large pieces. Submerging an unhealed tattoo risks infection and ink loss."}},
+    {"@type":"Question","name":"When can I work out or go to the gym after a tattoo?","acceptedAnswer":{"@type":"Answer","text":"Light, low-sweat movement is usually fine after a few days, but heavy sweating and equipment friction should wait roughly 1 to 2 weeks. Avoid exercises that stretch or rub the tattooed area until the surface has finished peeling."}},
+    {"@type":"Question","name":"When can I take a long bath or shower after a tattoo?","acceptedAnswer":{"@type":"Answer","text":"Short, lukewarm showers are fine almost immediately, but do not soak the tattoo. Long baths, soaking, and hot tubs should wait until the tattoo is fully healed, the same window as swimming."}},
+    {"@type":"Question","name":"When can I expose my tattoo to the sun?","acceptedAnswer":{"@type":"Answer","text":"Keep a healing tattoo out of direct sun while it is peeling, since UV damages new ink and can burn raw skin. Once healed, use SPF 30+ to prevent fading."}},
+    {"@type":"Question","name":"Is this tattoo healing calculator medical advice?","acceptedAnswer":{"@type":"Answer","text":"No. These are general aftercare estimates. Always follow your tattoo artist's specific instructions and consult a doctor if you see signs of infection."}}
+  ]
+}
+</script>
+
+<script>
+(function(){
+  "use strict";
+  const PADDLE_CHECKOUT = "https://buy.paddle.com/REPLACE";
+  document.getElementById("proBtn").href = PADDLE_CHECKOUT;
+
+  const $ = id => document.getElementById(id);
+  const dateEl = $("date"), sizeEl = $("size"), placeEl = $("place");
+
+  // default date = today
+  function isoToday(){ const d=new Date(); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+  dateEl.value = isoToday();
+
+  $("today").addEventListener("click", ()=>{ dateEl.value = isoToday(); calc(true); });
+  $("calc").addEventListener("click", ()=> calc(true));
+
+  function addDays(base, n){ const d = new Date(base.getTime()); d.setDate(d.getDate()+n); return d; }
+  function fmt(d){ return d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric",year:"numeric"}); }
+  function fmtShort(d){ return d.toLocaleDateString(undefined,{month:"short",day:"numeric"}); }
+
+  // Base milestones in days {key,t,desc,icon, base}
+  // We scale "wait" milestones by size+placement factor.
+  function buildMilestones(factor){
+    // factor ~ 1.0 small .. up to ~1.9 very large + friction
+    const r = (n)=> Math.round(n*factor);
+    return [
+      {key:"start", icon:"🩹", t:"Tattoo done — fresh wound", day:0,
+        desc:"Keep the wrap on as your artist instructed, then wash gently with mild soap."},
+      {key:"ooze", icon:"💧", t:"Oozing & swelling settle down", day:r(3),
+        desc:"Plasma weeping and puffiness fade. Keep washing 2× daily and moisturize lightly."},
+      {key:"peel", icon:"🍂", t:"Peeling & itching begin", day:r(5),
+        desc:"Flaking starts — do NOT pick or scratch. Let dead skin fall off on its own."},
+      {key:"shower", icon:"🚿", t:"Long warm shower OK (still no soaking)", day:r(7),
+        desc:"Outer skin is closing. Normal showers are fine; still avoid soaking the area."},
+      {key:"workout", icon:"🏋️", t:"Light exercise / gentle sweat OK", day:r(8),
+        desc:"Low-intensity movement is reasonable once peeling is well underway. Wipe sweat off and avoid friction on the tattoo."},
+      {key:"gym", icon:"🔥", t:"Heavy sweating & intense gym OK", day:r(14),
+        desc:"Surface skin has healed enough for hard training. Keep clothing loose over the area."},
+      {key:"sun", icon:"☀️", t:"Brief sun exposure OK (use SPF 30+)", day:r(21),
+        desc:"Short, sun-screened exposure is fine. UV fades fresh ink, so cover up when you can."},
+      {key:"chlorine", icon:"🏊", t:"Swimming in a chlorinated pool OK", day:r(28),
+        desc:"Tattoo should be fully closed before pool water. Rinse with clean water afterward."},
+      {key:"salt", icon:"🌊", t:"Ocean / saltwater & long baths OK", day:r(30),
+        desc:"Saltwater, lakes and hot tubs carry more bacteria — wait until fully healed and closed."},
+      {key:"healed", icon:"✅", t:"Considered fully healed on the surface", day:r(30),
+        desc:"Topical healing is done. Deeper layers keep settling for a few months — keep moisturizing and using SPF."}
+    ];
+  }
+
+  // "Can I do X today" quick pills
+  const PILLS = [
+    {key:"shower", label:"Long shower"},
+    {key:"workout", label:"Light workout"},
+    {key:"gym", label:"Hard gym / sweat"},
+    {key:"sun", label:"Sun exposure"},
+    {key:"chlorine", label:"Pool swim"},
+    {key:"salt", label:"Ocean / bath"}
+  ];
+
+  function factorFor(size, place){
+    // size: 0 small .. 3 very large ; place: 0 normal, 1 friction
+    const sizeF = [0.85, 1.0, 1.2, 1.45][size] || 1.0;
+    const placeF = place === "1" || place === 1 ? 1.25 : 1.0;
+    return Math.min(2.0, sizeF * placeF);
+  }
+
+  let lastSummary = "";
+
+  function calc(scroll){
+    if(!dateEl.value){ dateEl.focus(); return; }
+    const parts = dateEl.value.split("-").map(Number);
+    const base = new Date(parts[0], parts[1]-1, parts[2]);
+    if(isNaN(base.getTime())) return;
+
+    const factor = factorFor(Number(sizeEl.value), placeEl.value);
+    const ms = buildMilestones(factor);
+
+    // days elapsed (calendar)
+    const now = new Date(); const nowMid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const elapsed = Math.floor((nowMid - base) / 86400000);
+
+    const healedDay = ms[ms.length-1].day;
+    const pct = Math.max(0, Math.min(100, Math.round((Math.max(0,elapsed)/Math.max(1,healedDay))*100)));
+
+    // phase name
+    let phase = "Fresh wound";
+    if(elapsed < 0) phase = "Not started yet";
+    else if(elapsed >= healedDay) phase = "Healed 🎉";
+    else if(elapsed >= ms.find(m=>m.key==="sun").day) phase = "Final closing";
+    else if(elapsed >= ms.find(m=>m.key==="peel").day) phase = "Peeling & repair";
+    else if(elapsed >= ms.find(m=>m.key==="ooze").day) phase = "Settling";
+
+    $("dayNum").textContent = "Day " + (elapsed<0?0:elapsed);
+    $("phaseName").textContent = phase;
+    $("phaseFill").style.width = pct + "%";
+    $("fullDateLabel").textContent = "Fully healed: " + fmtShort(addDays(base, healedDay));
+
+    // pills
+    const candoEl = $("cando"); candoEl.innerHTML = "";
+    PILLS.forEach(p=>{
+      const m = ms.find(x=>x.key===p.key);
+      const safeDate = addDays(base, m.day);
+      const safe = elapsed >= m.day;
+      const daysLeft = m.day - elapsed;
+      const soon = !safe && daysLeft <= 3;
+      const cls = safe ? "yes" : (soon ? "soon" : "no");
+      const txt = safe ? "now ✓" : (daysLeft===1 ? "tomorrow" : "in "+daysLeft+"d · "+fmtShort(safeDate));
+      const el = document.createElement("span");
+      el.className = "pill "+cls;
+      el.innerHTML = '<span class="dot"></span>'+p.label+' — '+txt;
+      candoEl.appendChild(el);
+    });
+
+    // timeline
+    const tl = $("timeline"); tl.innerHTML = "";
+    ms.forEach(m=>{
+      const d = addDays(base, m.day);
+      const done = elapsed >= m.day;
+      const ev = document.createElement("div");
+      ev.className = "ev" + (done ? " done" : "");
+      const daysLeft = m.day - elapsed;
+      let whenTxt;
+      if(m.day===0) whenTxt = "Day 0";
+      else if(done) whenTxt = '<span class="badge2 done">done</span>';
+      else whenTxt = '<span class="badge2 wait">in '+daysLeft+'d</span>';
+      ev.innerHTML =
+        '<div class="icn">'+m.icon+'</div>'+
+        '<div class="meta"><div class="t">'+m.t+'</div>'+
+          '<div class="d">'+fmt(d)+' · Day '+m.day+'</div>'+
+          '<div class="desc">'+m.desc+'</div></div>'+
+        '<div class="when">'+whenTxt+'</div>';
+      tl.appendChild(ev);
+    });
+
+    // summary for copy
+    const lines = ["My tattoo healing timeline (from "+fmt(base)+"):"];
+    ms.filter(m=>m.day>0).forEach(m=> lines.push("• "+m.t+": "+fmt(addDays(base,m.day))));
+    lines.push("Calculated free at: tattoo healing timeline calculator");
+    lastSummary = lines.join("\n");
+
+    $("results").style.display = "block";
+    if(scroll) $("results").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  $("copy").addEventListener("click", async ()=>{
+    try{ await navigator.clipboard.writeText(lastSummary); $("copy").textContent="Copied ✓";
+      setTimeout(()=>$("copy").textContent="Copy summary",1500);
+    }catch(e){ alert(lastSummary); }
+  });
+  $("print").addEventListener("click", ()=> window.print());
+
+  // auto-run on load with today's date for instant value (no scroll)
+  calc();
+})();
+</script>
+</body>
+</html>
