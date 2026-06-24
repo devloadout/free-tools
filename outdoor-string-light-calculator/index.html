@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outdoor String Light Calculator | Plan & Buy Right</title>
+<meta name="description" content="Free outdoor string light calculator. Enter your patio, deck or pergola size and get total feet, strand count, poles, bulbs and cost — with sag built in and an auto diagram.">
+<style>
+  :root{
+    --bg:#0e1512; --panel:#15201b; --panel-2:#1b2a23; --line:#26352c;
+    --text:#e8f1ec; --muted:#9bb1a6; --accent:#46d39a; --accent-d:#2faa78;
+    --warn:#f0b95a; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:linear-gradient(180deg,#0e1512,#0b110e 60%);
+    color:var(--text);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:24px 18px 60px}
+  header.top{text-align:center;padding:18px 0 8px}
+  .badge{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent);background:rgba(70,211,154,.1);border:1px solid rgba(70,211,154,.25);
+    padding:5px 12px;border-radius:999px;margin-bottom:14px}
+  h1{font-size:clamp(26px,4.5vw,38px);line-height:1.15;margin:.1em 0 .25em}
+  .sub{color:var(--muted);max-width:620px;margin:0 auto;font-size:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px;margin-top:22px}
+  .grid{display:grid;gap:18px}
+  @media(min-width:760px){.grid.two{grid-template-columns:1fr 1fr}}
+  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 6px}
+  .hint{font-weight:400;color:#7d958a;font-size:12px}
+  input,select{width:100%;background:var(--panel-2);border:1px solid var(--line);
+    color:var(--text);border-radius:10px;padding:11px 12px;font-size:15px;font-family:inherit}
+  input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(70,211,154,.15)}
+  .field{margin-bottom:16px}
+  .row{display:flex;gap:12px}
+  .row .field{flex:1}
+  .seg{display:flex;gap:6px;flex-wrap:wrap}
+  .seg button{flex:1 1 auto;min-width:90px;background:var(--panel-2);border:1px solid var(--line);
+    color:var(--muted);padding:10px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;
+    transition:.15s}
+  .seg button.active{background:var(--accent);color:#06231a;border-color:var(--accent)}
+  .seg button:hover{border-color:var(--accent)}
+  .unit-toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .unit-toggle button{background:transparent;border:0;color:var(--muted);padding:7px 16px;
+    cursor:pointer;font-size:13px;font-weight:600}
+  .unit-toggle button.active{background:var(--accent);color:#06231a}
+  h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+    margin:0 0 16px;font-weight:700}
+  .results{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+  @media(min-width:560px){.results{grid-template-columns:repeat(3,1fr)}}
+  .stat{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .stat .n{font-size:26px;font-weight:800;color:var(--accent);line-height:1}
+  .stat .l{font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.04em}
+  .highlight .n{font-size:30px}
+  .diagram{margin-top:18px;background:#0c1410;border:1px solid var(--line);border-radius:12px;padding:10px}
+  svg{width:100%;height:auto;display:block}
+  .note{font-size:13px;color:var(--muted);margin-top:14px;padding:12px 14px;
+    background:rgba(240,185,90,.08);border:1px solid rgba(240,185,90,.25);border-radius:10px}
+  .ad{margin:24px 0;min-height:90px;border:1px dashed var(--line);border-radius:12px;
+    display:flex;align-items:center;justify-content:center;color:#5d7368;font-size:13px}
+  .pro{margin-top:22px;background:linear-gradient(135deg,rgba(70,211,154,.12),rgba(70,211,154,.04));
+    border:1px solid rgba(70,211,154,.3);border-radius:var(--radius);padding:20px;display:flex;
+    gap:16px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+  .pro h3{margin:0 0 4px;font-size:17px}
+  .pro p{margin:0;color:var(--muted);font-size:14px;max-width:560px}
+  .pro a{background:var(--accent);color:#06231a;text-decoration:none;font-weight:700;
+    padding:11px 20px;border-radius:10px;white-space:nowrap;font-size:14px}
+  .pro a:hover{background:var(--accent-d)}
+  .content{margin-top:34px}
+  .content h2{color:var(--text);text-transform:none;letter-spacing:0;font-size:22px}
+  .content h3{font-size:16px;margin:22px 0 6px}
+  .content p{color:#c4d4cb;font-size:15px;margin:6px 0}
+  details{border-bottom:1px solid var(--line);padding:14px 0}
+  details summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details summary::before{content:"+ ";color:var(--accent);font-weight:800}
+  details[open] summary::before{content:"– "}
+  details p{margin:10px 0 0;color:var(--muted);font-size:14px}
+  footer{text-align:center;color:#5d7368;font-size:13px;margin-top:46px;padding-top:20px;
+    border-top:1px solid var(--line)}
+  footer a{color:var(--accent);text-decoration:none}
+  .cost-on input{}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="badge">Free · No sign-up</span>
+    <h1>Outdoor String Light Calculator</h1>
+    <p class="sub">Enter your patio, deck, backyard or pergola size and get the exact feet of lights, number of strands, poles, bulbs and cost — with natural sag included.</p>
+  </header>
+
+  <!-- INPUTS -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+      <h2 style="margin:0">1 · Your layout</h2>
+      <div class="unit-toggle" id="unitToggle">
+        <button data-unit="ft" class="active">Feet</button>
+        <button data-unit="m">Meters</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Layout type</label>
+      <div class="seg" id="layoutSeg">
+        <button data-layout="perimeter" class="active">Perimeter run</button>
+        <button data-layout="span">Single span</button>
+        <button data-layout="zigzag">Crisscross / zigzag</button>
+        <button data-layout="grid">Pergola grid</button>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div>
+        <!-- dimension fields injected per layout -->
+        <div id="dimFields"></div>
+      </div>
+      <div>
+        <div class="field">
+          <label>Sag allowance <span class="hint">extra slack for the swag (10–20% typical)</span></label>
+          <input type="number" id="sag" value="15" min="0" max="60" step="1">
+        </div>
+        <div class="field">
+          <label>Strand length <span class="hint" id="strandUnitLbl">(ft)</span></label>
+          <select id="strandLen">
+            <option value="24">24</option>
+            <option value="25" selected>25</option>
+            <option value="48">48</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Bulb spacing <span class="hint" id="bulbUnitLbl">(in)</span></label>
+            <input type="number" id="bulbSpacing" value="12" min="1" step="1">
+          </div>
+          <div class="field">
+            <label>Price / strand <span class="hint">optional</span></label>
+            <input type="number" id="price" value="" min="0" step="0.01" placeholder="$0.00">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card">
+    <h2>2 · What to buy</h2>
+    <div class="results">
+      <div class="stat highlight">
+        <div class="n" id="rTotal">—</div>
+        <div class="l" id="rTotalLbl">Total length</div>
+      </div>
+      <div class="stat highlight">
+        <div class="n" id="rStrands">—</div>
+        <div class="l">Strands to buy</div>
+      </div>
+      <div class="stat">
+        <div class="n" id="rPoles">—</div>
+        <div class="l">Poles / anchors</div>
+      </div>
+      <div class="stat">
+        <div class="n" id="rBulbs">—</div>
+        <div class="l">Total bulbs</div>
+      </div>
+      <div class="stat">
+        <div class="n" id="rRuns">—</div>
+        <div class="l">Light runs</div>
+      </div>
+      <div class="stat">
+        <div class="n" id="rCost">—</div>
+        <div class="l">Est. cost</div>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <svg id="diagram" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-label="Layout diagram"></svg>
+    </div>
+    <div class="note" id="note">Pick a layout and enter your measurements to see the plan.</div>
+  </div>
+
+  <!-- AD_SLOT -->
+  <div class="ad" aria-hidden="true">Advertisement</div>
+
+  <!-- PRO -->
+  <div class="pro">
+    <div>
+      <h3>Plan your whole yard with Pro</h3>
+      <p>Drag-and-drop poles on a to-scale map of your actual space, draw multiple zones (patio + pergola + walkway) in one project, save &amp; share, and export a printable shopping-list PDF with strand counts, bulb totals, a hardware checklist and your local pricing.</p>
+    </div>
+    <a id="proBtn" href="#">Get Pro →</a>
+  </div>
+
+  <!-- SEO CONTENT -->
+  <div class="content">
+    <h2>How to size outdoor string lights the right way</h2>
+    <p>The number one reason people run out of lights mid-project is forgetting <strong>sag</strong>. String lights are meant to droop into a gentle swag between poles, so the cable you actually hang is longer than the straight-line distance. A 10–20% sag allowance covers most café-light looks; deeper, more dramatic swags can need 25% or more. This calculator adds your chosen percentage automatically, then rounds up to whole strands of the length you plan to buy so you never come up short.</p>
+
+    <h3>Quick reference: how many strands?</h3>
+    <p>A common question is "how many strands for a 20×20 ft deck?" For a perimeter run that is roughly 80 ft of edge; with 15% sag that's about 92 ft, or four 25 ft strands. A single crisscross from corner to corner across the same deck is two diagonals of ~28 ft each, ~65 ft with sag, so three 25 ft strands. Always confirm your bulbs' max connectable strands before linking many end-to-end.</p>
+
+    <p>Set your <strong>pole spacing</strong> so lights stay taut enough to look intentional — 8–12 ft between posts is typical for patio and bistro lights. Closer spacing means a tighter line and less sag; wider spacing looks relaxed but needs guy wire support. The diagram above redraws live so you can sanity-check the run before you order.</p>
+
+    <h2 id="faq">FAQ</h2>
+    <details open>
+      <summary>How do I account for sag in string lights?</summary>
+      <p>Add a sag allowance percentage to the straight-line distance. 10–15% gives a subtle swag, 20–25% gives a deeper, more decorative droop. This tool adds it for you and rounds up to whole strands.</p>
+    </details>
+    <details>
+      <summary>Zigzag vs straight — which uses more lights?</summary>
+      <p>A crisscross or zigzag canopy covers an area with several diagonal passes, so it almost always uses more total feet than a single perimeter or straight run. Use the layout buttons above to compare both for your exact dimensions.</p>
+    </details>
+    <details>
+      <summary>How far apart should I space poles or anchor points?</summary>
+      <p>8–12 ft (about 2.5–3.5 m) is the sweet spot for most café and patio string lights. Wider spans sag more and may need a steel guide/guy wire to carry the weight so the bulb cord isn't strained.</p>
+    </details>
+    <details>
+      <summary>How many strands do I need for a 20×20 ft deck?</summary>
+      <p>About four 25 ft strands for a perimeter run (≈92 ft with sag) or three for a single crisscross. Enter 20 × 20 above to see your exact count, bulbs and cost.</p>
+    </details>
+  </div>
+
+  <footer>
+    Built by <a href="#">DevLoadout</a> · Estimates only — verify your manufacturer's max connectable strand limit before linking.
+  </footer>
+</div>
+
+<script>
+const PADDLE_CHECKOUT = "https://buy.paddle.com/REPLACE";
+document.getElementById('proBtn').href = PADDLE_CHECKOUT;
+
+const $ = id => document.getElementById(id);
+const state = {
+  unit: 'ft',
+  layout: 'perimeter',
+  dims: { length: 20, width: 20, runLen: 30, cols: 4 }
+};
+
+// dimension field definitions per layout
+const LAYOUTS = {
+  perimeter: { fields:[['length','Length'],['width','Width']], note:'Lights run around all four edges of the rectangle.' },
+  span:      { fields:[['runLen','Span distance']], note:'A single straight run between two points (e.g. house to a pole).' },
+  zigzag:    { fields:[['length','Area length'],['width','Area width'],['cols','Zigzag passes']], note:'Lights cross back and forth (diagonal swags) over the area.' },
+  grid:      { fields:[['length','Length'],['width','Width'],['cols','Parallel runs']], note:'Parallel runs span the length, evenly spaced across the width (pergola canopy).' }
+};
+
+function unitName(){ return state.unit === 'ft' ? 'ft' : 'm'; }
+function bulbUnit(){ return state.unit === 'ft' ? 'in' : 'cm'; }
+
+function renderDimFields(){
+  const wrap = $('dimFields');
+  const u = unitName();
+  wrap.innerHTML = LAYOUTS[state.layout].fields.map(([key,label])=>{
+    const isCount = key === 'cols';
+    const sfx = isCount ? '' : ` <span class="hint">(${u})</span>`;
+    return `<div class="field">
+      <label>${label}${sfx}</label>
+      <input type="number" data-dim="${key}" value="${state.dims[key]}" min="${isCount?2:1}" step="${isCount?1:0.5}">
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('input[data-dim]').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      state.dims[inp.dataset.dim] = parseFloat(inp.value)||0;
+      compute();
+    });
+  });
+}
+
+function fmt(n){ return n.toLocaleString(undefined,{maximumFractionDigits:1}); }
+
+function compute(){
+  const u = unitName();
+  const d = state.dims;
+  const sag = 1 + (parseFloat($('sag').value)||0)/100;
+  const strandLen = parseFloat($('strandLen').value)||25;
+  const bulbSpacingRaw = parseFloat($('bulbSpacing').value)||12; // in or cm
+  const price = parseFloat($('price').value);
+
+  // base straight-line length & poles & runs (in selected unit)
+  let baseLen = 0, poles = 0, runs = 1;
+  const L = state.layout;
+
+  if(L === 'perimeter'){
+    baseLen = 2*((d.length||0)+(d.width||0));
+    poles = 4; // corners; simple
+    runs = 1;
+  } else if(L === 'span'){
+    baseLen = d.runLen||0;
+    poles = 2;
+    runs = 1;
+  } else if(L === 'zigzag'){
+    const passes = Math.max(2, Math.round(d.cols||2));
+    const segW = (d.length||0)/passes;
+    const diag = Math.sqrt(segW*segW + (d.width||0)*(d.width||0));
+    baseLen = diag*passes;
+    poles = passes + 1; // anchor points along the top/bottom
+    runs = 1;
+  } else if(L === 'grid'){
+    const cols = Math.max(2, Math.round(d.cols||2));
+    baseLen = (d.length||0)*cols;
+    poles = cols*2; // ends of each parallel run
+    runs = cols;
+  }
+
+  const totalLen = baseLen * sag;
+  const strands = totalLen > 0 ? Math.ceil(totalLen / strandLen) : 0;
+
+  // bulbs: convert spacing to selected unit
+  let spacingUnit;
+  if(state.unit === 'ft'){ spacingUnit = bulbSpacingRaw/12; }      // in -> ft
+  else { spacingUnit = bulbSpacingRaw/100; }                        // cm -> m
+  const bulbs = (spacingUnit>0 && totalLen>0) ? Math.round(totalLen/spacingUnit) : 0;
+
+  // outputs
+  $('rTotal').textContent = totalLen>0 ? fmt(totalLen) : '—';
+  $('rTotalLbl').textContent = `Total length (${u})`;
+  $('rStrands').textContent = strands || '—';
+  $('rPoles').textContent = poles || '—';
+  $('rBulbs').textContent = bulbs ? fmt(bulbs) : '—';
+  $('rRuns').textContent = runs || '—';
+
+  if(!isNaN(price) && strands>0){
+    $('rCost').textContent = '$' + (price*strands).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  } else {
+    $('rCost').textContent = '—';
+  }
+
+  // note
+  const purchasedLen = strands*strandLen;
+  let noteTxt = LAYOUTS[L].note;
+  if(strands>0){
+    noteTxt += ` You'll buy ${strands} × ${strandLen} ${u} strand${strands>1?'s':''} = ${fmt(purchasedLen)} ${u} (covers ${fmt(totalLen)} ${u} incl. ${(sag-1)*100|0}% sag).`;
+  }
+  $('note').textContent = noteTxt;
+
+  drawDiagram();
+}
+
+function drawDiagram(){
+  const svg = $('diagram');
+  const W=400,H=240,pad=30;
+  const aw=W-pad*2, ah=H-pad*2;
+  const accent='#46d39a', node='#e8f1ec';
+  let els = `<rect x="0" y="0" width="${W}" height="${H}" fill="#0c1410"/>`;
+  const L = state.layout, d = state.dims;
+
+  function fitRect(lenX, lenY){
+    if(lenX<=0||lenY<=0) return {x:pad,y:pad,w:aw,h:ah,s:1};
+    const sx = aw/lenX, sy = ah/lenY, s = Math.min(sx,sy);
+    const w = lenX*s, h = lenY*s;
+    return {x:(W-w)/2, y:(H-h)/2, w, h, s};
+  }
+  const dot = (x,y)=>`<circle cx="${x}" cy="${y}" r="4.5" fill="${node}" stroke="#0c1410" stroke-width="1.5"/>`;
+  const swag = (x1,y1,x2,y2)=>{
+    const mx=(x1+x2)/2, my=(y1+y2)/2 + Math.min(28, Math.hypot(x2-x1,y2-y1)*0.18);
+    return `<path d="M${x1},${y1} Q${mx},${my} ${x2},${y2}" fill="none" stroke="${accent}" stroke-width="2.4" stroke-linecap="round"/>`;
+  };
+
+  if(L==='span'){
+    const y=H/2;
+    els += swag(pad+10,y, W-pad-10,y);
+    els += dot(pad+10,y)+dot(W-pad-10,y);
+  } else if(L==='perimeter'){
+    const r = fitRect(d.length||1, d.width||1);
+    const c=[[r.x,r.y],[r.x+r.w,r.y],[r.x+r.w,r.y+r.h],[r.x,r.y+r.h]];
+    for(let i=0;i<4;i++){const a=c[i],b=c[(i+1)%4];els+=swag(a[0],a[1],b[0],b[1]);}
+    c.forEach(p=>els+=dot(p[0],p[1]));
+  } else if(L==='zigzag'){
+    const r = fitRect(d.length||1, d.width||1);
+    const passes=Math.max(2,Math.round(d.cols||2));
+    const step=r.w/passes;
+    for(let i=0;i<passes;i++){
+      const x1 = r.x + step*i;
+      const x2 = r.x + step*(i+1);
+      const up = i%2===0;
+      const ay = up?r.y+r.h:r.y, by = up?r.y:r.y+r.h;
+      els += swag(x1,ay,x2,by);
+    }
+    for(let i=0;i<=passes;i++){
+      const x=r.x+step*i;
+      els += dot(x, i%2===0?r.y+r.h:r.y);
+    }
+  } else if(L==='grid'){
+    const r = fitRect(d.length||1, d.width||1);
+    const cols=Math.max(2,Math.round(d.cols||2));
+    const step = cols>1 ? r.h/(cols-1) : 0;
+    for(let i=0;i<cols;i++){
+      const y=r.y+step*i;
+      els += swag(r.x,y, r.x+r.w,y);
+      els += dot(r.x,y)+dot(r.x+r.w,y);
+    }
+  }
+  svg.innerHTML = els;
+}
+
+// --- wiring ---
+$('layoutSeg').querySelectorAll('button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    $('layoutSeg').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    state.layout = b.dataset.layout;
+    renderDimFields();
+    compute();
+  });
+});
+
+$('unitToggle').querySelectorAll('button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    if(b.dataset.unit===state.unit) return;
+    $('unitToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    state.unit = b.dataset.unit;
+    const sel = $('strandLen');
+    if(state.unit==='m'){
+      sel.innerHTML = ['7','8','15','15.5','30'].map((v,i)=>`<option value="${v}" ${i===1?'selected':''}>${v}</option>`).join('');
+      $('bulbSpacing').value = 30;
+    } else {
+      sel.innerHTML = ['24','25','48','50','100'].map((v,i)=>`<option value="${v}" ${i===1?'selected':''}>${v}</option>`).join('');
+      $('bulbSpacing').value = 12;
+    }
+    $('strandUnitLbl').textContent = `(${unitName()})`;
+    $('bulbUnitLbl').textContent = `(${bulbUnit()})`;
+    renderDimFields();
+    compute();
+  });
+});
+
+['sag','strandLen','bulbSpacing','price'].forEach(id=>{
+  $(id).addEventListener('input', compute);
+});
+
+renderDimFields();
+compute();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"How do I account for sag in string lights?","acceptedAnswer":{"@type":"Answer","text":"Add a sag allowance percentage to the straight-line distance. 10-15% gives a subtle swag, 20-25% gives a deeper decorative droop. The calculator adds it automatically and rounds up to whole strands."}},
+    {"@type":"Question","name":"Does a zigzag use more lights than a straight run?","acceptedAnswer":{"@type":"Answer","text":"Yes. A crisscross or zigzag canopy covers an area with several diagonal passes, so it uses more total feet than a single perimeter or straight run."}},
+    {"@type":"Question","name":"How far apart should I space poles for string lights?","acceptedAnswer":{"@type":"Answer","text":"8-12 feet (about 2.5-3.5 meters) is ideal for most cafe and patio string lights. Wider spans sag more and may need a guy wire for support."}},
+    {"@type":"Question","name":"How many strands do I need for a 20x20 ft deck?","acceptedAnswer":{"@type":"Answer","text":"About four 25 ft strands for a perimeter run (roughly 92 ft with sag) or three for a single crisscross. Enter your dimensions to get the exact count."}}
+  ]
+}
+</script>
+</body>
+</html>

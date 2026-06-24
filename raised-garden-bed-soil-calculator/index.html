@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raised Garden Bed Soil Calculator | Bags & Volume</title>
+<meta name="description" content="Free raised garden bed soil calculator. Find out how much soil for a raised garden bed in cubic feet, yards & liters, plus exactly how many bags to buy.">
+<style>
+  :root{
+    --bg:#0f1419;--panel:#171e26;--panel2:#1d2731;--line:#283340;
+    --txt:#e6edf3;--muted:#93a1b0;--accent:#46d39a;--accent-d:#2fae7d;
+    --warn:#f5a623;--radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent)}
+  .wrap{max-width:880px;margin:0 auto;padding:24px 18px 64px}
+  header.site{text-align:center;padding:14px 0 6px}
+  .badge{display:inline-block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:4px 12px;margin-bottom:14px}
+  h1{font-size:clamp(1.5rem,4vw,2.1rem);margin:.2em 0 .25em;line-height:1.2}
+  .sub{color:var(--muted);max-width:620px;margin:0 auto;font-size:1rem}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px;margin-top:22px}
+  h2{font-size:1.2rem;margin:0 0 4px}
+  h3{font-size:1.02rem;margin:1.4em 0 .4em}
+  label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:5px}
+  input,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--txt);
+    border-radius:9px;padding:10px 11px;font-size:15px;font-family:inherit}
+  input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+  .row{display:grid;gap:12px}
+  .grid-dims{grid-template-columns:repeat(4,1fr)}
+  .grid-opts{grid-template-columns:1fr 1fr}
+  @media(max-width:620px){.grid-dims{grid-template-columns:1fr 1fr}.grid-opts{grid-template-columns:1fr}}
+  .bed{border:1px solid var(--line);border-radius:11px;padding:14px;margin-bottom:14px;background:var(--panel2)}
+  .bed-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .bed-head strong{font-size:.95rem}
+  .bed-vol{font-size:.82rem;color:var(--accent);font-weight:600}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:9px;font-size:14px;font-weight:600}
+  .btn-add{background:transparent;color:var(--accent);border:1px dashed var(--line);
+    padding:11px 14px;width:100%;margin-top:4px}
+  .btn-add:hover{border-color:var(--accent)}
+  .btn-x{background:transparent;color:var(--muted);border:1px solid var(--line);
+    padding:5px 10px;font-size:12px;border-radius:7px}
+  .btn-x:hover{color:#ff8d7a;border-color:#ff8d7a}
+  .results{margin-top:24px}
+  .total-vol{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px}
+  @media(max-width:620px){.total-vol{grid-template-columns:1fr 1fr}}
+  .stat{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:14px;text-align:center}
+  .stat .v{font-size:1.5rem;font-weight:700;color:var(--accent);line-height:1.1}
+  .stat .l{font-size:.74rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.04em}
+  .bags{margin-top:18px}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+  td.num,th.num{text-align:right}
+  .bagcount{color:var(--accent);font-weight:700}
+  .notice{margin-top:16px;padding:12px 14px;border-radius:10px;font-size:.88rem;
+    background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.4);color:#ffd58a;display:none}
+  .notice.show{display:block}
+  .cost-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:8px}
+  .cost-row .f{flex:1;min-width:130px}
+  .cost-out{font-size:.9rem;color:var(--muted);margin-top:10px}
+  .cost-out b{color:var(--txt)}
+  .pro{margin-top:14px;background:linear-gradient(135deg,rgba(70,211,154,.10),rgba(70,211,154,.02));
+    border:1px solid rgba(70,211,154,.35);border-radius:12px;padding:14px 16px;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .pro p{margin:0;font-size:.9rem;color:var(--muted)}
+  .pro p b{color:var(--txt)}
+  .btn-pro{background:var(--accent);color:#06281c;padding:9px 16px;text-decoration:none;white-space:nowrap}
+  .btn-pro:hover{background:var(--accent-d)}
+  .prose{color:#c6d2dd;font-size:.95rem}
+  .prose p{margin:.6em 0}
+  details{border-top:1px solid var(--line);padding:12px 0}
+  details summary{cursor:pointer;font-weight:600;color:var(--txt)}
+  details p{color:var(--muted);font-size:.92rem;margin:.6em 0 0}
+  footer{text-align:center;color:var(--muted);font-size:.85rem;margin-top:40px}
+  footer a{color:var(--muted)}
+  .ad{margin:24px 0;min-height:1px}
+  .hint{font-size:.78rem;color:var(--muted);margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <span class="badge">Garden Planning Tool</span>
+    <h1>Raised Garden Bed Soil Calculator</h1>
+    <p class="sub">Enter your bed dimensions to see exactly how much soil you need and how many bags to buy. Add as many beds as you like.</p>
+  </header>
+
+  <section class="card">
+    <h2>Your beds</h2>
+    <div class="row grid-opts" style="margin:14px 0">
+      <div>
+        <label for="units">Measurement units</label>
+        <select id="units">
+          <option value="ft">Feet</option>
+          <option value="in">Inches</option>
+          <option value="cm">Centimeters</option>
+        </select>
+      </div>
+      <div>
+        <label for="fill">Fill level</label>
+        <select id="fill">
+          <option value="1">Fill to the top</option>
+          <option value="0.9">Leave a 10% lip (recommended)</option>
+          <option value="1.1">Add 10% for settling</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="beds"></div>
+    <button class="btn-add" id="addBed">+ Add another bed</button>
+  </section>
+
+  <!-- AD_SLOT -->
+  <div class="ad"></div>
+
+  <section class="card results">
+    <h2>How much soil you need</h2>
+    <div class="total-vol">
+      <div class="stat"><div class="v" id="vCuft">0</div><div class="l">Cubic feet</div></div>
+      <div class="stat"><div class="v" id="vCuyd">0</div><div class="l">Cubic yards</div></div>
+      <div class="stat"><div class="v" id="vLiters">0</div><div class="l">Liters</div></div>
+      <div class="stat"><div class="v" id="vCum">0</div><div class="l">Cubic meters</div></div>
+    </div>
+
+    <div class="notice" id="bulkNotice"></div>
+
+    <div class="bags">
+      <h3>Bags to buy</h3>
+      <table>
+        <thead><tr><th>Bag size</th><th class="num">Bags needed</th><th class="num">Approx. total</th></tr></thead>
+        <tbody id="bagBody"></tbody>
+      </table>
+      <p class="hint">Rounded up to whole bags. "Approx. total" uses your price per bag if entered below.</p>
+    </div>
+
+    <div style="margin-top:18px">
+      <h3>Estimate your cost</h3>
+      <div class="cost-row">
+        <div class="f">
+          <label for="bagSize">Bag size you'll buy</label>
+          <select id="bagSize">
+            <option value="1">1.0 cu ft</option>
+            <option value="1.5" selected>1.5 cu ft</option>
+            <option value="2">2.0 cu ft</option>
+          </select>
+        </div>
+        <div class="f">
+          <label for="bagPrice">Price per bag ($)</label>
+          <input id="bagPrice" type="number" min="0" step="0.01" value="9.97" inputmode="decimal">
+        </div>
+      </div>
+      <p class="cost-out" id="costOut"></p>
+    </div>
+
+    <div class="pro">
+      <p><b>Pro:</b> Export a printable garden-bed plan PDF with your full bag shopping list, a Mel's Mix (1/3 compost, 1/3 coir, 1/3 vermiculite) breakdown, and saved cost estimates per bed.</p>
+      <a class="btn-pro" id="proBtn" href="#">Get the Plan Export</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Recommended soil depth by crop</h2>
+    <table>
+      <thead><tr><th>What you're growing</th><th class="num">Minimum soil depth</th></tr></thead>
+      <tbody>
+        <tr><td>Leafy greens, herbs, radishes</td><td class="num">6 in (15 cm)</td></tr>
+        <tr><td>Peppers, beans, beets, onions</td><td class="num">8&ndash;10 in (20&ndash;25 cm)</td></tr>
+        <tr><td>Tomatoes, squash, broccoli</td><td class="num">12 in (30 cm)</td></tr>
+        <tr><td>Carrots, potatoes, deep roots</td><td class="num">12&ndash;18 in (30&ndash;45 cm)</td></tr>
+        <tr><td>Mixed perennial / dwarf shrubs</td><td class="num">18+ in (45+ cm)</td></tr>
+      </tbody>
+    </table>
+    <p class="hint">A standard raised bed is 10&ndash;12 in deep. You can fill the bottom third with logs, branches or coarse mulch (h&uuml;gelkultur) to cut soil cost on deep beds.</p>
+  </section>
+
+  <section class="card prose">
+    <h2>How much soil for a raised garden bed?</h2>
+    <p>To find the soil volume for a raised bed, multiply length &times; width &times; depth. For example, a classic <b>4 ft &times; 8 ft bed filled 10 inches deep</b> needs about <b>26.7 cubic feet</b> of soil &mdash; that's roughly <b>27 bags at 1 cu ft</b>, <b>18 bags at 1.5 cu ft</b>, or <b>14 bags at 2 cu ft</b>. A 4&times;4 bed at the same depth needs about half that.</p>
+    <p>Always buy a little extra: bagged soil is sold by volume <em>before</em> it settles and compresses, and fresh beds slump several inches in the first season. The "add 10% for settling" option above builds that buffer in for you. If your total climbs above roughly 1 cubic yard (about 27 cu ft, or 18+ bags), compare prices on <b>bulk soil delivery</b> &mdash; it's usually far cheaper per cubic foot than bags once you hit that threshold.</p>
+    <p>For the best results, don't use bagged "topsoil" alone. A proven raised-bed blend is <b>Mel's Mix</b>: equal parts compost, coconut coir (or peat) and coarse vermiculite. It drains well, holds moisture and needs no native soil underneath.</p>
+
+    <h3>Frequently asked questions</h3>
+    <details><summary>How many bags of soil for a 4x8 raised bed?</summary>
+      <p>A 4 ft &times; 8 ft bed filled to 10 inches needs about 26.7 cu ft of soil: around 27 bags of 1 cu ft, 18 bags of 1.5 cu ft, or 14 bags of 2 cu ft. At a full 12-inch depth it's 32 cu ft, so add roughly 20% more bags.</p>
+    </details>
+    <details><summary>How much soil for a 4x4 raised bed?</summary>
+      <p>A 4 ft &times; 4 ft bed at 10 inches deep needs about 13.3 cu ft &mdash; roughly 9 bags of 1.5 cu ft. At 6 inches deep (for greens and herbs) it's only 8 cu ft.</p>
+    </details>
+    <details><summary>How many cubic feet are in a cubic yard of soil?</summary>
+      <p>There are 27 cubic feet in 1 cubic yard. Once your project needs more than about a cubic yard, bulk delivery is usually cheaper than buying bags.</p>
+    </details>
+    <details><summary>Should I fill a raised bed to the very top?</summary>
+      <p>Leave about a 1&ndash;2 inch lip below the rim so soil and mulch don't wash over the edge when you water. The "leave a 10% lip" option above accounts for this.</p>
+    </details>
+    <details><summary>Can I use cheaper fill at the bottom of a deep bed?</summary>
+      <p>Yes. For beds deeper than about 12 inches, fill the bottom third with logs, sticks, leaves or coarse compost (h&uuml;gelkultur) and reserve quality soil for the top 8&ndash;10 inches where roots grow.</p>
+    </details>
+  </section>
+
+  <footer>
+    Built by <a href="#">DevLoadout</a> &middot; Estimates only &mdash; soil settles, so buy a little extra.
+  </footer>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"How many bags of soil for a 4x8 raised bed?","acceptedAnswer":{"@type":"Answer","text":"A 4 ft by 8 ft bed filled to 10 inches needs about 26.7 cubic feet of soil: around 27 bags of 1 cu ft, 18 bags of 1.5 cu ft, or 14 bags of 2 cu ft. At a full 12-inch depth it is 32 cu ft."}},
+    {"@type":"Question","name":"How much soil for a 4x4 raised bed?","acceptedAnswer":{"@type":"Answer","text":"A 4 ft by 4 ft bed at 10 inches deep needs about 13.3 cubic feet, roughly 9 bags of 1.5 cu ft. At 6 inches deep it is only 8 cu ft."}},
+    {"@type":"Question","name":"How many cubic feet are in a cubic yard of soil?","acceptedAnswer":{"@type":"Answer","text":"There are 27 cubic feet in 1 cubic yard. Once your project needs more than about a cubic yard, bulk delivery is usually cheaper than buying bags."}},
+    {"@type":"Question","name":"Should I fill a raised bed to the very top?","acceptedAnswer":{"@type":"Answer","text":"Leave about a 1 to 2 inch lip below the rim so soil and mulch do not wash over the edge when you water."}},
+    {"@type":"Question","name":"Can I use cheaper fill at the bottom of a deep bed?","acceptedAnswer":{"@type":"Answer","text":"Yes. For beds deeper than about 12 inches, fill the bottom third with logs, sticks, leaves or coarse compost and reserve quality soil for the top 8 to 10 inches."}}
+  ]
+}
+</script>
+
+<script>
+(function(){
+  "use strict";
+  const PADDLE_CHECKOUT = "https://buy.paddle.com/REPLACE";
+  document.getElementById("proBtn").href = PADDLE_CHECKOUT;
+
+  const CUFT_PER_CUYD = 27;
+  const LITERS_PER_CUFT = 28.3168;
+  const CUM_PER_CUFT = 0.0283168;
+  const CUFT_PER_40LB = 0.5;
+
+  const bedsEl = document.getElementById("beds");
+  const unitsEl = document.getElementById("units");
+  const fillEl = document.getElementById("fill");
+
+  let bedId = 0;
+  const defaults = { ft:{l:8,w:4,d:0.83}, in:{l:96,w:48,d:10}, cm:{l:244,w:122,d:25} };
+
+  function unitLabel(){ return {ft:"ft",in:"in",cm:"cm"}[unitsEl.value]; }
+
+  function addBed(prefill){
+    bedId++;
+    const id = bedId;
+    const u = unitsEl.value;
+    const d = defaults[u];
+    const wrap = document.createElement("div");
+    wrap.className = "bed";
+    wrap.dataset.id = id;
+    wrap.innerHTML =
+      '<div class="bed-head">' +
+        '<strong>Bed ' + (bedsEl.children.length+1) + '</strong>' +
+        '<div><span class="bed-vol" data-vol></span> <button class="btn-x" type="button" data-remove>Remove</button></div>' +
+      '</div>' +
+      '<div class="row grid-dims">' +
+        '<div><label>Length (<span data-ul>'+unitLabel()+'</span>)</label><input type="number" min="0" step="any" data-l value="'+(prefill?prefill.l:d.l)+'" inputmode="decimal"></div>' +
+        '<div><label>Width (<span data-ul>'+unitLabel()+'</span>)</label><input type="number" min="0" step="any" data-w value="'+(prefill?prefill.w:d.w)+'" inputmode="decimal"></div>' +
+        '<div><label>Depth (<span data-ul>'+unitLabel()+'</span>)</label><input type="number" min="0" step="any" data-d value="'+(prefill?prefill.d:d.d)+'" inputmode="decimal"></div>' +
+        '<div><label>Quantity</label><input type="number" min="1" step="1" data-q value="'+(prefill?prefill.q:1)+'" inputmode="numeric"></div>' +
+      '</div>';
+    bedsEl.appendChild(wrap);
+    wrap.querySelector("[data-remove]").addEventListener("click",function(){
+      if(bedsEl.children.length>1){ wrap.remove(); renumber(); calc(); }
+    });
+    wrap.querySelectorAll("input").forEach(function(i){ i.addEventListener("input",calc); });
+  }
+
+  function renumber(){
+    Array.prototype.forEach.call(bedsEl.children,function(b,i){
+      b.querySelector("strong").textContent = "Bed "+(i+1);
+    });
+  }
+
+  function toFeet(val,u){
+    if(u==="ft") return val;
+    if(u==="in") return val/12;
+    if(u==="cm") return val/30.48;
+    return val;
+  }
+
+  function fmt(n,dp){
+    if(!isFinite(n)) n=0;
+    return n.toLocaleString(undefined,{minimumFractionDigits:dp,maximumFractionDigits:dp});
+  }
+
+  function calc(){
+    const u = unitsEl.value;
+    const fill = parseFloat(fillEl.value)||1;
+    let totalCuft = 0;
+    Array.prototype.forEach.call(bedsEl.children,function(b){
+      const l = parseFloat(b.querySelector("[data-l]").value)||0;
+      const w = parseFloat(b.querySelector("[data-w]").value)||0;
+      const d = parseFloat(b.querySelector("[data-d]").value)||0;
+      const q = Math.max(1, Math.floor(parseFloat(b.querySelector("[data-q]").value)||1));
+      const cuft = toFeet(l,u)*toFeet(w,u)*toFeet(d,u)*q;
+      b.querySelector("[data-vol]").textContent = cuft>0 ? fmt(cuft*fill,1)+" cu ft" : "";
+      totalCuft += cuft;
+    });
+    totalCuft *= fill;
+
+    document.getElementById("vCuft").textContent = fmt(totalCuft,1);
+    document.getElementById("vCuyd").textContent = fmt(totalCuft/CUFT_PER_CUYD,2);
+    document.getElementById("vLiters").textContent = fmt(totalCuft*LITERS_PER_CUFT,0);
+    document.getElementById("vCum").textContent = fmt(totalCuft*CUM_PER_CUFT,2);
+
+    const sizes = [
+      {label:"1.0 cu ft bag", cuft:1},
+      {label:"1.5 cu ft bag", cuft:1.5},
+      {label:"2.0 cu ft bag", cuft:2},
+      {label:"40 lb bag (~0.5 cu ft)", cuft:CUFT_PER_40LB}
+    ];
+    const priceSel = parseFloat(document.getElementById("bagSize").value);
+    const price = parseFloat(document.getElementById("bagPrice").value)||0;
+    const body = document.getElementById("bagBody");
+    body.innerHTML = "";
+    sizes.forEach(function(s){
+      const bags = totalCuft>0 ? Math.ceil(totalCuft/s.cuft) : 0;
+      let costCell = "&mdash;";
+      if(price>0 && Math.abs(s.cuft-priceSel)<1e-9){
+        costCell = "$"+fmt(bags*price,2);
+      }
+      const tr = document.createElement("tr");
+      tr.innerHTML = '<td>'+s.label+'</td><td class="num bagcount">'+bags+'</td><td class="num">'+costCell+'</td>';
+      body.appendChild(tr);
+    });
+
+    const bagsSel = totalCuft>0 ? Math.ceil(totalCuft/priceSel) : 0;
+    const costOut = document.getElementById("costOut");
+    if(price>0 && bagsSel>0){
+      costOut.innerHTML = "You'll need <b>"+bagsSel+" &times; "+priceSel+" cu ft bags</b> &asymp; <b>$"+fmt(bagsSel*price,2)+"</b> total.";
+    } else {
+      costOut.textContent = "Enter a price per bag to see your estimated total.";
+    }
+
+    const notice = document.getElementById("bulkNotice");
+    if(totalCuft >= CUFT_PER_CUYD){
+      const yd = totalCuft/CUFT_PER_CUYD;
+      notice.innerHTML = "&#9888; You need about <b>"+fmt(yd,1)+" cubic yard"+(yd>=1.5?"s":"")+"</b> of soil. At this volume, <b>bulk soil delivery is usually cheaper per cubic foot</b> than bagged soil &mdash; get a bulk quote before buying "+bagsSel+" bags.";
+      notice.classList.add("show");
+    } else {
+      notice.classList.remove("show");
+    }
+  }
+
+  unitsEl.addEventListener("change",function(){
+    document.querySelectorAll("[data-ul]").forEach(function(s){ s.textContent=unitLabel(); });
+    calc();
+  });
+  fillEl.addEventListener("change",calc);
+  document.getElementById("bagSize").addEventListener("change",calc);
+  document.getElementById("bagPrice").addEventListener("input",calc);
+  document.getElementById("addBed").addEventListener("click",function(){ addBed(); renumber(); calc(); });
+
+  addBed();
+  calc();
+})();
+</script>
+</body>
+</html>

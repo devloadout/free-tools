@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Post Hole Concrete Calculator: Bags per Post Hole</title>
+<meta name="description" content="Free post hole concrete calculator. Find out how many bags of concrete per post hole (40, 50, 60, 80 lb) for fence, mailbox, deck and pergola posts. Imperial &amp; metric.">
+<style>
+  :root{
+    --bg:#0e1411;
+    --panel:#16201b;
+    --panel-2:#1b2620;
+    --line:#26352c;
+    --text:#e6efe9;
+    --muted:#9bb0a4;
+    --accent:#46d39a;
+    --accent-dim:#2f9e74;
+    --danger:#ff7a6b;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent)}
+  .wrap{max-width:960px;margin:0 auto;padding:24px 18px 60px}
+  header.site{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .logo{
+    width:38px;height:38px;border-radius:10px;flex:0 0 auto;
+    background:linear-gradient(135deg,var(--accent),var(--accent-dim));
+    display:flex;align-items:center;justify-content:center;font-size:20px;
+  }
+  h1{font-size:1.7rem;line-height:1.2;margin:.2em 0 .1em}
+  .sub{color:var(--muted);margin:0 0 22px;font-size:1rem}
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:20px;
+  }
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:680px){.grid{grid-template-columns:1fr}}
+  label{display:block;font-size:.83rem;color:var(--muted);margin-bottom:6px;font-weight:600;letter-spacing:.02em}
+  .field{margin-bottom:16px}
+  input[type=number],select{
+    width:100%;background:var(--panel-2);border:1px solid var(--line);
+    color:var(--text);border-radius:10px;padding:11px 12px;font-size:1rem;
+    appearance:none;outline:none;transition:border-color .15s,box-shadow .15s;
+  }
+  input[type=number]:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(70,211,154,.16)}
+  .inline{display:flex;gap:8px}
+  .inline input{flex:1}
+  .unit-toggle{display:inline-flex;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .unit-toggle button{
+    background:transparent;border:0;color:var(--muted);padding:8px 16px;font-size:.9rem;
+    cursor:pointer;font-weight:600;transition:all .15s;
+  }
+  .unit-toggle button.active{background:var(--accent);color:#06140d}
+  .presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+  .presets button{
+    background:var(--panel-2);border:1px solid var(--line);color:var(--text);
+    padding:8px 12px;border-radius:999px;font-size:.85rem;cursor:pointer;transition:all .15s;
+  }
+  .presets button:hover{border-color:var(--accent);color:var(--accent)}
+  .row-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+  .results{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:4px}
+  @media(max-width:680px){.results{grid-template-columns:1fr}}
+  .stat{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .stat .num{font-size:2rem;font-weight:800;line-height:1;color:var(--accent)}
+  .stat .num.small{font-size:1.5rem}
+  .stat .lab{color:var(--muted);font-size:.8rem;margin-top:8px;text-transform:uppercase;letter-spacing:.04em}
+  .bags-hero{
+    background:linear-gradient(135deg,rgba(70,211,154,.14),rgba(47,158,116,.06));
+    border:1px solid var(--accent-dim);
+  }
+  .bags-hero .num{font-size:2.6rem}
+  .hint{font-size:.82rem;color:var(--muted);margin-top:4px}
+  .checkrow{display:flex;align-items:center;gap:8px;margin-top:6px}
+  .checkrow input{width:auto;margin:0}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:10px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em}
+  td.r,th.r{text-align:right}
+  h2{font-size:1.2rem;margin:0 0 12px}
+  .muted{color:var(--muted)}
+  details{border-bottom:1px solid var(--line);padding:12px 0}
+  details summary{cursor:pointer;font-weight:600;list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details summary::before{content:"+ ";color:var(--accent);font-weight:800}
+  details[open] summary::before{content:"– "}
+  details p{color:var(--muted);margin:10px 0 0}
+  .pro{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    background:linear-gradient(135deg,rgba(70,211,154,.10),rgba(70,211,154,.02));
+    border:1px dashed var(--accent-dim);border-radius:var(--radius);padding:16px 18px;margin-bottom:20px;
+  }
+  .pro .ptxt{font-size:.92rem}
+  .pro .ptxt b{color:var(--accent)}
+  .btn{
+    background:var(--accent);color:#06140d;border:0;border-radius:10px;padding:11px 18px;
+    font-size:.92rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;display:inline-block;
+  }
+  .btn:hover{background:#5ee0aa}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+  .ad{margin:20px 0;min-height:0}
+  footer{color:var(--muted);font-size:.85rem;text-align:center;margin-top:30px;border-top:1px solid var(--line);padding-top:18px}
+  footer b{color:var(--text)}
+  .warn{color:var(--danger);font-size:.85rem;margin-top:8px;display:none}
+  .legend{font-size:.78rem;color:var(--muted);margin-top:14px}
+  .post-shape-fields{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site">
+    <div class="logo">🕳️</div>
+    <div>
+      <strong>Post Hole Concrete Calculator</strong>
+    </div>
+  </header>
+
+  <h1>Post Hole Concrete Calculator</h1>
+  <p class="sub">Find out exactly <strong>how many bags of concrete per post hole</strong> you need before your hardware-store run. Built for fence, mailbox, deck, and pergola posts.</p>
+
+  <!-- AD_SLOT -->
+
+  <div class="card">
+    <div class="row-top">
+      <div>
+        <label style="margin-bottom:8px">Quick presets</label>
+        <div class="presets" id="presets"></div>
+      </div>
+      <div>
+        <label style="margin-bottom:8px">Units</label>
+        <div class="unit-toggle" id="unitToggle">
+          <button data-unit="imperial" class="active">Imperial</button>
+          <button data-unit="metric">Metric</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="field">
+          <label>Hole diameter (<span class="u-len">in</span>)</label>
+          <input type="number" id="diameter" min="0" step="0.5" value="10">
+          <div class="hint">Auger/digger width. Common: 8–12 in for fence posts.</div>
+        </div>
+        <div class="field">
+          <label>Hole depth (<span class="u-len">in</span>)</label>
+          <input type="number" id="depth" min="0" step="1" value="30">
+          <div class="hint">Rule of thumb: 1/3 of the post above ground goes below.</div>
+        </div>
+        <div class="field">
+          <label>Number of posts</label>
+          <input type="number" id="posts" min="1" step="1" value="1">
+        </div>
+      </div>
+
+      <div>
+        <div class="field">
+          <label>Subtract the post itself?</label>
+          <select id="postShape">
+            <option value="none">No — fill the whole hole</option>
+            <option value="square" selected>Yes — square / rectangular post</option>
+            <option value="round">Yes — round post</option>
+          </select>
+        </div>
+        <div class="field post-shape-fields" data-shape="square round">
+          <div class="inline">
+            <div style="flex:1" data-shape="square">
+              <label>Post width (<span class="u-len">in</span>)</label>
+              <input type="number" id="postW" min="0" step="0.25" value="3.5">
+            </div>
+            <div style="flex:1" data-shape="square">
+              <label>Post depth (<span class="u-len">in</span>)</label>
+              <input type="number" id="postD" min="0" step="0.25" value="3.5">
+            </div>
+            <div style="flex:1;display:none" data-shape="round">
+              <label>Post diameter (<span class="u-len">in</span>)</label>
+              <input type="number" id="postDia" min="0" step="0.25" value="4">
+            </div>
+          </div>
+          <div class="hint">A 4×4 post is actually 3.5 × 3.5 in.</div>
+        </div>
+        <div class="field">
+          <label>Concrete bag size</label>
+          <select id="bag"></select>
+        </div>
+        <div class="field">
+          <label>Waste / overfill margin: <span id="wasteLabel">10%</span></label>
+          <input type="range" id="waste" min="0" max="30" step="5" value="10" style="width:100%">
+        </div>
+      </div>
+    </div>
+    <div class="warn" id="warn">Please enter positive numbers for diameter and depth.</div>
+  </div>
+
+  <div class="card">
+    <h2>You need</h2>
+    <div class="results">
+      <div class="stat bags-hero">
+        <div class="num" id="rBags">—</div>
+        <div class="lab" id="rBagsLab">bags total</div>
+      </div>
+      <div class="stat">
+        <div class="num small" id="rCuft">—</div>
+        <div class="lab">net concrete (<span class="u-vol">cu ft</span>)</div>
+      </div>
+      <div class="stat">
+        <div class="num small" id="rCuyd">—</div>
+        <div class="lab">net concrete (<span class="u-vol2">cu yd</span>)</div>
+      </div>
+    </div>
+    <div class="hint" id="perHole" style="margin-top:14px"></div>
+  </div>
+
+  <div class="pro">
+    <div class="ptxt">
+      <b>Going pro?</b> Add your local price per bag to generate a printable PDF shopping list &amp; cost estimate (gravel base, frost-line depth, client quote).
+    </div>
+    <a class="btn" id="proBtn" href="#">Get the Project Quote tool →</a>
+  </div>
+
+  <div class="ad"><!-- AD_SLOT --></div>
+
+  <div class="card">
+    <h2>Bag yield reference</h2>
+    <p class="muted" style="font-size:.88rem;margin:0">Approximate set concrete yield per bag (Quikrete / Sakrete fast-setting &amp; standard mixes). Yields vary slightly by brand.</p>
+    <table id="yieldTable">
+      <thead><tr><th>Bag size</th><th class="r">Yield (cu ft)</th><th class="r">Yield (cu yd)</th><th class="r">Liters</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="legend">Note: fast-setting (e.g. Quikrete 5000 / Fast-Setting) lets you pour dry and add water in the hole — these yields assume a properly mixed pour.</div>
+  </div>
+
+  <div class="card">
+    <h2>How many bags of concrete per post hole?</h2>
+    <p class="muted" style="font-size:.92rem">
+      Setting a post is simple math: the concrete fills the hole <em>minus</em> the space the post itself takes up. The volume of a round hole is π × (radius)² × depth. This calculator does that for you, subtracts the post's cross-section, totals it across every post, then rounds <strong>up</strong> to whole bags because you can't buy a partial bag. For most 4×4 fence posts in a 10 in × 30 in hole, you'll use roughly two 50 lb bags of fast-setting concrete per post.
+    </p>
+    <p class="muted" style="font-size:.92rem">
+      A few field tips: dig 1/3 of the post's above-ground height below grade (a 6 ft fence post wants about 2 ft deep), add 4–6 in of gravel at the bottom for drainage so the post doesn't rot, and slope the concrete crown away from the post to shed water. Always buy one extra bag — holes are never perfectly cylindrical, and running short mid-pour means a weak cold joint.
+    </p>
+
+    <h2 style="margin-top:22px">FAQ</h2>
+    <details open>
+      <summary>How many bags of concrete do I need for one fence post?</summary>
+      <p>For a typical 10-inch-wide, 30-inch-deep hole with a 4×4 post, you'll need about 1–2 bags of 50 lb fast-setting concrete, or one 80 lb bag. Enter your exact hole size above for a precise count.</p>
+    </details>
+    <details>
+      <summary>How deep should a fence post hole be?</summary>
+      <p>Bury about 1/3 of the post's total length, or to below your local frost line — whichever is deeper. A 6 ft tall fence usually means a 2 ft (24 in) deep hole, plus a few inches of gravel.</p>
+    </details>
+    <details>
+      <summary>Do I need to mix the concrete first?</summary>
+      <p>For fence posts, fast-setting concrete can be poured dry into the hole, then water added on top — no mixing tub needed. For structural deck footings, mix to spec and consult local building codes.</p>
+    </details>
+    <details>
+      <summary>How many 80 lb bags are in a cubic yard?</summary>
+      <p>An 80 lb bag yields about 0.6 cu ft set, so it takes roughly 45 bags to make one cubic yard (27 cu ft). The calculator shows your total in both bags and cubic yards.</p>
+    </details>
+  </div>
+
+  <footer>
+    Built by <b>DevLoadout</b> · Estimates only — verify against your bag label and local building codes.
+  </footer>
+</div>
+
+<script>
+const PADDLE_CHECKOUT = "https://buy.paddle.com/REPLACE";
+document.getElementById('proBtn').href = PADDLE_CHECKOUT;
+
+// --- Bag yield data: yield in cubic feet of set concrete per bag ---
+const BAGS = [
+  {label:"40 lb (18 kg)", cuft:0.30},
+  {label:"50 lb (22.7 kg)", cuft:0.375},
+  {label:"60 lb (27 kg)", cuft:0.45},
+  {label:"80 lb (36 kg)", cuft:0.60}
+];
+const DEFAULT_BAG = 3; // 80 lb
+
+// --- Presets: dims in inches ---
+const PRESETS = [
+  {name:"Fence post (4×4)", dia:10, depth:30, shape:"square", w:3.5, d:3.5},
+  {name:"Heavy fence (6×6)", dia:12, depth:36, shape:"square", w:5.5, d:5.5},
+  {name:"Mailbox post", dia:8, depth:24, shape:"square", w:3.5, d:3.5},
+  {name:"Deck footing", dia:12, depth:42, shape:"none"},
+  {name:"Pergola post", dia:12, depth:30, shape:"round", postDia:6},
+];
+
+const CUFT_PER_CUYD = 27;
+const CUFT_PER_LITER = 0.0353147;
+const IN_PER_CM = 0.393701;
+
+let unit = "imperial"; // imperial: inches in / cu ft & yd out. metric: cm in / liters & m3 out
+
+// populate bag select
+const bagSel = document.getElementById('bag');
+BAGS.forEach((b,i)=>{
+  const o=document.createElement('option');
+  o.value=i; o.textContent=b.label;
+  bagSel.appendChild(o);
+});
+bagSel.value = DEFAULT_BAG;
+
+// populate presets
+const presetWrap = document.getElementById('presets');
+PRESETS.forEach((p,i)=>{
+  const btn=document.createElement('button');
+  btn.textContent=p.name;
+  btn.addEventListener('click',()=>applyPreset(i));
+  presetWrap.appendChild(btn);
+});
+
+// populate yield table
+const ytb = document.querySelector('#yieldTable tbody');
+BAGS.forEach(b=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${b.label}</td><td class="r">${b.cuft.toFixed(2)}</td><td class="r">${(b.cuft/CUFT_PER_CUYD).toFixed(4)}</td><td class="r">${(b.cuft/CUFT_PER_LITER).toFixed(1)}</td>`;
+  ytb.appendChild(tr);
+});
+
+const $ = id => document.getElementById(id);
+const els = {
+  dia:$('diameter'), depth:$('depth'), posts:$('posts'),
+  shape:$('postShape'), postW:$('postW'), postD:$('postD'), postDia:$('postDia'),
+  waste:$('waste'), wasteLabel:$('wasteLabel'),
+  warn:$('warn')
+};
+
+function applyPreset(i){
+  const p = PRESETS[i];
+  const r = v => unit==='metric' ? +(v/IN_PER_CM).toFixed(1) : v;
+  els.dia.value = r(p.dia);
+  els.depth.value = r(p.depth);
+  els.shape.value = p.shape;
+  if(p.shape==='square'){ els.postW.value=r(p.w); els.postD.value=r(p.d); }
+  if(p.shape==='round'){ els.postDia.value=r(p.postDia); }
+  syncShapeFields();
+  compute();
+}
+
+function syncShapeFields(){
+  const shape = els.shape.value;
+  const block = document.querySelector('.post-shape-fields');
+  block.style.display = (shape==='none') ? 'none' : 'block';
+  document.querySelectorAll('[data-shape]').forEach(el=>{
+    if(el.classList.contains('post-shape-fields')) return;
+    const shapes = el.getAttribute('data-shape').split(' ');
+    el.style.display = shapes.includes(shape) ? '' : 'none';
+  });
+}
+
+// unit toggle
+document.getElementById('unitToggle').addEventListener('click',e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  const newUnit = b.dataset.unit;
+  if(newUnit===unit) return;
+  const factor = (newUnit==='metric') ? (1/IN_PER_CM) : IN_PER_CM;
+  ['dia','depth','postW','postD','postDia'].forEach(k=>{
+    const v=parseFloat(els[k].value);
+    if(!isNaN(v)) els[k].value = +(v*factor).toFixed(2);
+  });
+  unit=newUnit;
+  document.querySelectorAll('#unitToggle button').forEach(x=>x.classList.toggle('active',x.dataset.unit===unit));
+  updateUnitLabels();
+  compute();
+});
+
+function updateUnitLabels(){
+  const len = unit==='metric'?'cm':'in';
+  document.querySelectorAll('.u-len').forEach(e=>e.textContent=len);
+  document.querySelectorAll('.u-vol').forEach(e=>e.textContent= unit==='metric'?'liters':'cu ft');
+  document.querySelectorAll('.u-vol2').forEach(e=>e.textContent= unit==='metric'?'m³':'cu yd');
+  document.getElementById('rBagsLab').textContent='bags total';
+}
+
+function compute(){
+  const num = id => parseFloat(els[id].value);
+  let dia = num('dia'), depth = num('depth'), posts = parseInt(els.posts.value);
+  const shape = els.shape.value;
+  const waste = parseInt(els.waste.value);
+  els.wasteLabel.textContent = waste + '%';
+
+  const toIn = v => unit==='metric' ? v*IN_PER_CM : v;
+  dia = toIn(dia); depth = toIn(depth);
+
+  const valid = dia>0 && depth>0 && posts>0;
+  els.warn.style.display = valid ? 'none' : 'block';
+  if(!valid){
+    ['rBags','rCuft','rCuyd'].forEach(id=>$(id).textContent='—');
+    $('perHole').textContent='';
+    return;
+  }
+
+  const r = dia/2;
+  const holeVol = Math.PI * r*r * depth;
+
+  let postVol = 0;
+  if(shape==='square'){
+    const w=toIn(num('postW'))||0, d=toIn(num('postD'))||0;
+    postVol = w*d*depth;
+  } else if(shape==='round'){
+    const pr=(toIn(num('postDia'))||0)/2;
+    postVol = Math.PI*pr*pr*depth;
+  }
+
+  let netPerHole = Math.max(holeVol - postVol, 0);
+  const netPerHoleCuft = netPerHole / 1728;
+  const totalCuft = netPerHoleCuft * posts * (1 + waste/100);
+
+  const bag = BAGS[parseInt(bagSel.value)];
+  const bagsExact = totalCuft / bag.cuft;
+  const bagsWhole = Math.ceil(bagsExact);
+
+  $('rBags').textContent = bagsWhole;
+  if(unit==='metric'){
+    const liters = totalCuft / CUFT_PER_LITER;
+    const m3 = totalCuft / CUFT_PER_LITER / 1000;
+    $('rCuft').textContent = liters.toFixed(1);
+    $('rCuyd').textContent = m3.toFixed(3);
+  } else {
+    $('rCuft').textContent = totalCuft.toFixed(2);
+    $('rCuyd').textContent = (totalCuft/CUFT_PER_CUYD).toFixed(3);
+  }
+
+  const perBags = Math.ceil(netPerHoleCuft*(1+waste/100)/bag.cuft);
+  $('perHole').textContent =
+    `≈ ${perBags} bag${perBags!==1?'s':''} per hole · ${posts} post${posts!==1?'s':''} · ${bag.label} · ${waste}% waste included.`;
+}
+
+// listeners
+['diameter','depth','posts','postW','postD','postDia','waste'].forEach(id=>{
+  $(id).addEventListener('input',compute);
+});
+els.shape.addEventListener('change',()=>{syncShapeFields();compute();});
+bagSel.addEventListener('change',compute);
+
+// init
+updateUnitLabels();
+syncShapeFields();
+compute();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"How many bags of concrete do I need for one fence post?","acceptedAnswer":{"@type":"Answer","text":"For a typical 10-inch-wide, 30-inch-deep hole with a 4x4 post, you'll need about 1 to 2 bags of 50 lb fast-setting concrete, or one 80 lb bag. Enter your exact hole size for a precise count."}},
+    {"@type":"Question","name":"How deep should a fence post hole be?","acceptedAnswer":{"@type":"Answer","text":"Bury about one third of the post's total length, or to below your local frost line, whichever is deeper. A 6 ft tall fence usually means a 24 inch deep hole plus a few inches of gravel."}},
+    {"@type":"Question","name":"Do I need to mix the concrete first?","acceptedAnswer":{"@type":"Answer","text":"For fence posts, fast-setting concrete can be poured dry into the hole then water added on top, with no mixing tub needed. For structural deck footings, mix to spec and consult local building codes."}},
+    {"@type":"Question","name":"How many 80 lb bags are in a cubic yard?","acceptedAnswer":{"@type":"Answer","text":"An 80 lb bag yields about 0.6 cubic feet set, so it takes roughly 45 bags to make one cubic yard (27 cubic feet)."}}
+  ]
+}
+</script>
+</body>
+</html>
